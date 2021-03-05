@@ -4,7 +4,6 @@
 		{
 			"path": "pages/tabbar/home/home",
 			"style": {
-				"navigationBarTitleText": "首页"
 			}
 		},
 		{
