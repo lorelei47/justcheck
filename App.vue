@@ -40,5 +40,6 @@
 <style>
 	@import "colorui/main.css";
 	@import "colorui/icon.css";
-/*每个页面公共css */ 
+	@import "static/css/justcheck.css";
+	/*每个页面公共css */ 
 </style>

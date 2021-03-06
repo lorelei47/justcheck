@@ -1,6 +1,9 @@
 <template>
 	<view>
-		
+		<cu-custom bgColor="topTitle">
+			<block slot="content">个人中心</block>
+		</cu-custom>
+		<view></view>
 	</view>
 </template>
 
