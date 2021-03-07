@@ -12,7 +12,7 @@
 				<button class="cu-btn bg-gradual-green shadow-blur round">搜索</button>
 			</view>
 		</view>
-		<view class="page-news">
+		<view class="page-news" :style="[{top: CustomBar + 'px'}]">
 			<!-- #ifdef MP-QQ -->
 			<scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
 			  <view v-for="(item, index) in dataList" :key="item.id">
@@ -50,11 +50,11 @@
 
 <script>
 import {friendlyDate} from '@/common/util.js';
-import uniList from '@/pages/components/uni-list.vue';
-import uniCell from '@/pages/components/uni-cell.vue';
-import uniRefresh from '@/pages/components/uni-refresh.vue';
-import uniLoadMore from '@/pages/components/uni-load-more.vue';
-import noData from '@/pages/components/nodata.nvue';
+import uniList from '@/pages/components/colorUi/uni-list.vue';
+import uniCell from '@/pages/components/colorUi/uni-cell.vue';
+import uniRefresh from '@/pages/components/colorUi/uni-refresh.vue';
+import uniLoadMore from '@/pages/components/colorUi/uni-load-more.vue';
+import noData from '@/pages/components/colorUi/nodata.nvue';
 import questionItem from '@/pages/components/home/question-item.vue';
 export default {
 	components: {
@@ -264,7 +264,7 @@ export default {
   }
 
   .page-news {
-    flex: 1;
+	flex: 1;
     flex-direction: column;
     position: absolute;
     left: 0;
