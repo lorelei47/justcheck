@@ -12,12 +12,36 @@
 		{
 			"path": "pages/tabbar/user/user",
 			"style": {}
+		},
+		{
+			"path": "pages/user/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		}, 
+		{
+			"path": "pages/user/reg/reg",
+			"style": {
+				"navigationBarTitleText": "注册"
+			}
+		}, 
+		{
+			"path": "pages/user/pwd/pwd",
+			"style": {
+				"navigationBarTitleText": "找回密码"
+			}
+		}, 
+		{
+			"path": "pages/user/pwd/update-password",
+			"style": {
+				"navigationBarTitleText": "修改密码"
+			}
 		}
 	],
 	"globalStyle": {
-		// "navigationBarTextStyle": "white",
+		"navigationBarTextStyle": "white",
 		// "navigationBarTitleText": "uni-app",
-		// "navigationBarBackgroundColor": "#237f41"
+		"navigationBarBackgroundColor": "#237f41"
 		// "backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
