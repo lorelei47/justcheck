@@ -305,7 +305,7 @@
 				 * 返回首页也使用reLaunch方式
 				 */
 				uni.reLaunch({
-					url: '../main/main',
+					url: '../../tabbar/user/user',
 				});
 			},
 			toLogin(value) {

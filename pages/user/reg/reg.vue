@@ -82,7 +82,7 @@
 							uni.setStorageSync('uni_id_token', e.result.token)
 							uni.setStorageSync('username', e.result.username)
 							uni.reLaunch({
-								url: '../main/main',
+								url: '../../tabbar/user/user',
 							});
 						} else {
 							uni.showModal({

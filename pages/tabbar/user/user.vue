@@ -49,9 +49,11 @@
 					<text class="navigat-arrow">&#xe65e;</text>
 				</view>
 			</view>
-			<view class="btn-row">
-				<button v-if="hasLogin" class="primary" type="primary" :loading="logoutBtnLoading"
-					@tap="bindLogout">退出登录</button>
+			<view class="center-list" v-if="hasLogin" :loading="logoutBtnLoading" @tap="bindLogout">
+				<view class="center-list-item">
+					<text class="list-icon">&#xe65e;</text>
+					<text class="list-text">退出登录</text>
+				</view>
 			</view>
 		</view>
 	</view>
