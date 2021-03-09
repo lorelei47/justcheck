@@ -19,5 +19,5 @@
 </script>
 
 <style>
-	@import "./m-icon.css";
+	@import "m-icon.css";
 </style>

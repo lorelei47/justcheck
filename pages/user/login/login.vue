@@ -1,5 +1,5 @@
 <template>
-	<view class="content">
+	<view class="content-login">
 		<view class="input-group">
 			<view class="input-row border">
 				<text class="title">账号：</text>
@@ -19,7 +19,7 @@
 			</view>
 		</view>
 		<view class="btn-row">
-			<button type="primary" class="primary" :loading="loginBtnLoading" @tap="bindLogin">登录</button>
+			<button class="login-btn" :loading="loginBtnLoading" @tap="bindLogin">登录</button>
 		</view>
 		<view class="action-row">
 			<navigator url="../reg/reg">注册账号</navigator>
@@ -32,7 +32,8 @@
 				<!-- #endif -->
 			</view>
 		</view>
-		<view class="oauth-row" v-if="hasProvider && !hasAppleLogin && platform ==='ios'" v-bind:style="{top: (positionTop - 50) + 'px'}">
+		<view class="oauth-row" v-if="hasProvider && !hasAppleLogin && platform ==='ios'"
+			v-bind:style="{top: (positionTop - 50) + 'px'}">
 			<text style="color: #C8C7CC;text-align: center;">暂无法使用苹果登录，请查阅&nbsp;&nbsp;
 				<text style="color: #C8C7CC;text-decoration: underline;" @click="openAppleLoginDoc">Apple登录集成教程</text>
 			</text>
@@ -495,7 +496,7 @@
 	}
 </script>
 
-<style>
+<style scoped>
 	.login-type {
 		display: flex;
 		justify-content: center;
@@ -518,7 +519,7 @@
 	}
 
 	.action-row navigator {
-		color: #007aff;
+		color: #237f41;
 		padding: 0 10px;
 	}
 

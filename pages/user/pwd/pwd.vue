@@ -1,5 +1,5 @@
 <template>
-	<view class="content">
+	<view class="content-login">
 		<view class="input-group">
 			<view class="input-row">
 				<text class="title">邮箱：</text>
@@ -8,7 +8,7 @@
 		</view>
 
 		<view class="btn-row">
-			<button type="primary" class="primary" @tap="findPassword">提交</button>
+			<button class="login-btn" @tap="findPassword">提交</button>
 		</view>
 	</view>
 </template>

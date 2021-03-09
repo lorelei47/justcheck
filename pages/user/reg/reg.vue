@@ -1,5 +1,5 @@
 <template>
-	<view class="content">
+	<view class="content-login">
 		<view class="input-group">
 			<view class="input-row border">
 				<text class="title">账号：</text>
@@ -15,7 +15,7 @@
 			</view>
 		</view>
 		<view class="btn-row">
-			<button type="primary" class="primary" @tap="register">注册并登录</button>
+			<button class="login-btn" @tap="register">注册并登录</button>
 		</view>
 	</view>
 </template>

@@ -85,7 +85,7 @@
 						if (err === false) return;
 						
 						uni.navigateTo({
-							url: '/user/login/login',
+							url: '/pages/user/login/login',
 						});
 					})
 				}
@@ -96,7 +96,7 @@
 					this.logout();
 					if (this.forcedLogin) {
 						uni.reLaunch({
-							url: '/user/login/login',
+							url: '/pages/user/login/login',
 						});
 					}
 					return
@@ -122,7 +122,7 @@
 							this.inviteUrl = ''
 							if (this.forcedLogin) {
 								uni.reLaunch({
-									url: '/user/login/login',
+									url: '/pages/user/login/login',
 								});
 							}
 						} else {
@@ -147,7 +147,7 @@
 			},
 			goto() {
 				uni.navigateTo({
-					url: '/user/pwd/update-password'
+					url: '/pages/user/pwd/update-password'
 				})
 			}
 		}
