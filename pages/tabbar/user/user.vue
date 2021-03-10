@@ -7,7 +7,7 @@
 			<view class="logo" @click="bindLogin" :hover-class="!hasLogin ? 'logo-hover' : ''">
 				<image class="logo-img" :src="avatarUrl"></image>
 				<view class="logo-title">
-					<text class="uer-name">Hi，{{hasLogin ? userName : '您未登录'}}</text>
+					<text class="uer-name">{{hasLogin ? userName : '您未登录'}}</text>
 					<text class="go-login navigat-arrow" v-if="!hasLogin">&#xe65e;</text>
 				</view>
 			</view>

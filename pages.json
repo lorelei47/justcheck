@@ -18,23 +18,28 @@
 			"style": {
 				"navigationBarTitleText": "登录"
 			}
-		}, 
+		},
 		{
 			"path": "pages/user/reg/reg",
 			"style": {
 				"navigationBarTitleText": "注册"
 			}
-		}, 
+		},
 		{
 			"path": "pages/user/pwd/pwd",
 			"style": {
 				"navigationBarTitleText": "找回密码"
 			}
-		}, 
+		},
 		{
 			"path": "pages/user/pwd/update-password",
 			"style": {
 				"navigationBarTitleText": "修改密码"
+			}
+		}, {
+			"path": "pages/tabbar/home/question",
+			"style": {
+				"navigationBarTitleText": "问题"
 			}
 		}
 	],
@@ -51,20 +56,20 @@
 		"selectedColor": "#00ff48",
 		//icon来源：https://www.iconfont.cn/collections/detail?spm=a313x.7781069.1998910419.d9df05512&cid=317
 		"list": [{
-				"pagePath": "pages/tabbar/home/home",
-				"iconPath": "static/img/tabbar/home.png",
-				"selectedIconPath": "static/img/tabbar/homeactive.png",
-				"text": "首页"
-			},{
-				"pagePath": "pages/tabbar/examination/examination",
-				"iconPath": "static/img/tabbar/examination.png",
-				"selectedIconPath": "static/img/tabbar/examinationactive.png",
-				"text": "试题"
-			},{
-				"pagePath": "pages/tabbar/user/user",
-				"iconPath": "static/img/tabbar/user.png",
-				"selectedIconPath": "static/img/tabbar/useractive.png",
-				"text": "我的"
-			}]
+			"pagePath": "pages/tabbar/home/home",
+			"iconPath": "static/img/tabbar/home.png",
+			"selectedIconPath": "static/img/tabbar/homeactive.png",
+			"text": "首页"
+		}, {
+			"pagePath": "pages/tabbar/examination/examination",
+			"iconPath": "static/img/tabbar/examination.png",
+			"selectedIconPath": "static/img/tabbar/examinationactive.png",
+			"text": "试题"
+		}, {
+			"pagePath": "pages/tabbar/user/user",
+			"iconPath": "static/img/tabbar/user.png",
+			"selectedIconPath": "static/img/tabbar/useractive.png",
+			"text": "我的"
+		}]
 	}
 }

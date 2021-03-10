@@ -189,15 +189,9 @@ export default {
 		  this.requestParams.minId = 0;
 		},
 		goDetail(detail) {
-		  // if (this._isWidescreen) { //若为宽屏，则触发右侧详情页的自定义事件
-		  //   uni.$emit('updateDetail', {
-		  //     detail: encodeURIComponent(JSON.stringify(detail))
-		  //   })
-		  // } else {
-		  //   uni.navigateTo({
-		  //     url: '/pages/detail/detail?query=' + encodeURIComponent(JSON.stringify(detail))
-		  //   });
-		  // }
+			uni.navigateTo({
+				url: '/pages/tabbar/home/question',
+			});
 		},
 		closeItem(index) {
 		  uni.showModal({
