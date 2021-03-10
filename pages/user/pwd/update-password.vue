@@ -32,7 +32,13 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
+	import uniForms from '@/pages/user/uni-forms/uni-forms.vue'
+	import uniFormsItem from '@/pages/user/uni-forms-item/uni-forms-item.vue'
 	export default {
+		components:{
+			uniForms,
+			uniFormsItem
+		},
 		data() {
 			return {
 				showPassword: true,
@@ -134,7 +140,7 @@
 										uni.removeStorageSync('uni_id_token')
 										uni.removeStorageSync('username')
 										uni.reLaunch({
-											url: '/pages/login/login'
+											url: '/pages/user/login/login'
 										})
 									}
 								}
