@@ -50,6 +50,21 @@
 		"question-tag": {
 			"bsonType": "string",
 			"description": "题目标签"
+		},
+		"question-difficulty": {
+			"bsonType": "int",
+			"description": "题目难度",
+			"defaultValue": 1,
+			"enum": [{
+				"text": "简单",
+				"value": 1
+			}, {
+				"text": "中等",
+				"value": 2
+			}, {
+				"text": "困难",
+				"value": 3
+			}]
 		}
 	}
 }

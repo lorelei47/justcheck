@@ -21,7 +21,7 @@
 				<text class="uni-icon-password-eye pointer" :class="[!showPasswordAgain ? 'uni-eye-active' : '']" @click="changePasswordAgain">&#xe568;</text>
 			</uni-forms-item>
 			<view class="uni-button-group pointer">
-				<button class="uni-button uni-button-full" type="primary" @click="submitForm">保存</button>
+				<button class="uni-button uni-button-full login-btn" @click="submitForm">保存</button>
 			</view>
 		</uni-forms>
 	</view>
