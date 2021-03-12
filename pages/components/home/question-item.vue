@@ -1,18 +1,18 @@
 <template>
-	<view class="media-item view" v-if="questionItem.title" @click="click">
+	<view class="media-item view" v-if="questionItem.questionTitle" @click="click">
 		<view class="view" style="flex-direction: column;">
 			<text class="media-title"
-				:class="{'media-title2': questionItem.article_type === 1 || questionItem.article_type === 2}">{{questionItem.title}}</text>
+				:class="{'media-title2': questionItem.questionType === 1 || questionItem.questionType === 2}">{{questionItem.questionTitle}}</text>
 		</view>
 		<view class="view" style="flex-direction: column;">
 			<text class="media-resume"
-				:class="{'media-resume2': questionItem.article_type === 1 || questionItem.article_type === 2}">{{questionItem.title}}</text>
+				:class="{'media-resume2': questionItem.questionType === 1 || questionItem.questionType === 2}">{{questionItem.questionTitle}}</text>
 		</view>
 		<view class="media-foot flex-row">
 			<view class="media-info flex-row">
-				<text class="info-text">{{questionItem.source}}</text>
-				<text class="info-text">{{questionItem.comment_count}}条评论</text>
-				<text class="info-text">{{questionItem.datetime}}</text>
+				<text class="info-text">{{questionItem.questionDifficulty}}</text>
+				<text class="info-text">{{questionItem.questionTag}}</text>
+				<text class="info-text">{{questionItem.uploadDate}}</text>
 			</view>
 		</view>
 		<view class="media-item-line" style="position: absolute;"></view>

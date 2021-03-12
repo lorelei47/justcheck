@@ -17,7 +17,14 @@ exports.main = async (event, context) => {
 	switch (event.action) {
 		case 'question-list':
 			const questionListCollection = db.collection('question-list');
-			let questionList = await questionListCollection.orderBy('upload_date', 'desc').get();
+			let questionList = await questionListCollection.orderBy('upload_date', 'desc').field({
+				'_id': true,
+				'upload_date': true,
+				'question_type': true,
+				'question_title': true,
+				'question_tag': true,
+				'question_difficulty': true,
+			}).get();
 			res = {
 				code: 0,
 				...questionList

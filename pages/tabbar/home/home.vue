@@ -56,7 +56,7 @@
 
 <script>
 	import {
-		friendlyDate
+		timestampToTime
 	} from '@/common/util.js';
 	import uniList from '@/pages/components/colorUi/uni-list.vue';
 	import uniCell from '@/pages/components/colorUi/uni-cell.vue';
@@ -127,84 +127,63 @@
 				if (this.isLoading) {
 					return;
 				}
-
 				this.isLoading = true;
 				this.isNoData = false;
 				this.requestParams.time = new Date().getTime() + '';
-
-				var startTime = new Date();
-				// uni.request({
-				// 	// url: this.$host + 'api/news',
-				// 	url: 'https://unidemo.dcloud.net.cn/api/news',
-				// 	data: this.requestParams,
-				// 	success: (result) => {
-				// 		var endTime = new Date();
-				// 		const data = result.data;
-				// 		this.isNoData = (data.length <= 0);
-
-				// 		const data_list = data.map((news) => {
-				// 			return {
-				// 				id: this.newGuid() + news.id,
-				// 				newsid: news.id,
-				// 				article_type: 1,
-				// 				datetime: friendlyDate(new Date(news.published_at.replace(/\-/g, '/'))
-				// 					.getTime()),
-				// 				title: news.title,
-				// 				image_url: news.cover,
-				// 				source: news.author_name,
-				// 				comment_count: news.comments_count,
-				// 				post_id: news.post_id
-				// 			};
-				// 		});
-
-				// 		if (refresh) {
-				// 			this.dataList = data_list;
-				// 			this.requestParams.minId = 0;
-				// 		} else {
-				// 			this.dataList = this.dataList.concat(data_list);
-				// 			this.requestParams.minId = data[data.length - 1].id;
-				// 		}
-
-				// 		if (this.dataList.length > 0 && this._isWidescreen && this.dataList.length <= 10) {
-				// 			this.goDetail(this.dataList[0]);
-				// 		}
-				// 	},
-				// 	fail: (err) => {
-				// 		if (this.dataList.length == 0) {
-				// 			this.isNoData = true;
-				// 		}
-				// 	},
-				// 	complete: (e) => {
-				// 		this.isLoading = false;
-				// 		if (refresh) {
-				// 			this.refreshing = false;
-				// 			this.refreshFlag = false;
-				// 			this.refreshText = "已刷新";
-				// 			if (this.pullTimer) {
-				// 				clearTimeout(this.pullTimer);
-				// 			}
-				// 			this.pullTimer = setTimeout(() => {
-				// 				this.pulling = false;
-				// 			}, 1000);
-				// 		}
-				// 	}
-				// });
+			
 				uniCloud.callFunction({
 					name: 'question-handler',
 					data: {
 						action: 'question-list',
 						// param: {100}
 					},
-					success: (e) => {
-						console.log(e);
+					success: (res) => {
+						const data = res.result.data;
+						this.isNoData = (data.length <= 0);
+						
+						const data_list = data.map((question) => {
+							return {
+								id: this.newGuid() + question.id,
+								questionid: question.id,
+								questionType: question.question_type,
+								uploadDate: timestampToTime(parseInt(question.upload_date)),
+								questionTitle: question.question_title,
+								questionTag: question.question_tag,
+								questionDifficulty: question.question_difficulty
+							};
+						});
+						
+						if (refresh) {
+							this.dataList = data_list;
+							this.requestParams.minId = 0;
+						} else {
+							this.dataList = this.dataList.concat(data_list);
+							this.requestParams.minId = data[data.length - 1].id;
+						}
+						
+						if (this.dataList.length > 0 && this._isWidescreen && this.dataList.length <= 10) {
+							this.goDetail(this.dataList[0]);
+						}
 					},
 					fail: (e) => {
-						uni.showModal({
-							content: JSON.stringify(e),
-							showCancel: false
-						})
+						if (this.dataList.length == 0) {
+							this.isNoData = true;
+						}
 					},
-					complete: () => {}
+					complete: (e) => {
+						this.isLoading = false;
+						if (refresh) {
+							this.refreshing = false;
+							this.refreshFlag = false;
+							this.refreshText = "已刷新";
+							if (this.pullTimer) {
+								clearTimeout(this.pullTimer);
+							}
+							this.pullTimer = setTimeout(() => {
+								this.pulling = false;
+							}, 1000);
+						}
+					}
 				})
 			},
 			loadMore(e) {

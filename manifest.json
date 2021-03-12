@@ -6,8 +6,8 @@
     "versionCode" : "100",
     "transformPx" : false,
     "app-plus" : {
-		"usingComponents": true,
-		"compilerVersion": 3,
+        "usingComponents" : true,
+        "compilerVersion" : 3,
         /* 5+App特有相关 */
         "modules" : {},
         /* 模块配置 */
@@ -35,7 +35,13 @@
             },
             "ios" : {},
             /* ios打包配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {
+                "ad" : {},
+                "oauth" : {}
+            }
+        },
+        "uniStatistics" : {
+            "enable" : false
         }
     },
     /* SDK配置 */
@@ -47,6 +53,39 @@
         "setting" : {
             "urlCheck" : true
         },
-        "usingComponents": true
+        "usingComponents" : true,
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "uniStatistics" : {
+        "enable" : false
+    },
+    "h5" : {
+        "uniStatistics" : {
+            "enable" : false
+        },
+        "title" : "justcheck",
+        "template" : "index.html"
+    },
+    "mp-alipay" : {
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "mp-baidu" : {
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "mp-qq" : {
+        "uniStatistics" : {
+            "enable" : false
+        }
+    },
+    "mp-toutiao" : {
+        "uniStatistics" : {
+            "enable" : false
+        }
     }
 }
