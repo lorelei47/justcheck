@@ -1,17 +1,17 @@
 <template>
 	<view class="media-item view" v-if="questionItem.questionTitle" @click="click">
 		<view class="view" style="flex-direction: column;">
+			<text></text>
 			<text class="media-title"
 				:class="{'media-title2': questionItem.questionType === 1 || questionItem.questionType === 2}">{{questionItem.questionTitle}}</text>
 		</view>
-		<view class="view" style="flex-direction: column;">
-			<text class="media-resume"
-				:class="{'media-resume2': questionItem.questionType === 1 || questionItem.questionType === 2}">{{questionItem.questionTitle}}</text>
-		</view>
 		<view class="media-foot flex-row">
 			<view class="media-info flex-row">
-				<text class="info-text">{{questionItem.questionDifficulty}}</text>
-				<text class="info-text">{{questionItem.questionTag}}</text>
+				<text class="info-text"
+					:class="difficultyIcon(questionItem.questionDifficulty)">{{difficultyText(questionItem.questionDifficulty)}}</text>
+				<text class="info-text" v-for="(item, index) in questionItem.questionTag">{{item}}</text>
+			</view>
+			<view class="media-info flex-row">
 				<text class="info-text">{{questionItem.uploadDate}}</text>
 			</view>
 		</view>
@@ -36,6 +36,40 @@
 			close(e) {
 				e.stopPropagation();
 				this.$emit('close');
+			},
+			difficultyIcon(e) {
+				let iconClass = ''
+				switch (e) {
+					case 1:
+						iconClass = 'easyIcon';
+						break;
+					case 2:
+						iconClass = 'normalIcon';
+						break;
+					case 3:
+						iconClass = 'difficultIcon';
+						break;
+					default:
+						break;
+				}
+				return iconClass;
+			},
+			difficultyText(e) {
+				let iconText = ''
+				switch (e) {
+					case 1:
+						iconText = '简单';
+						break;
+					case 2:
+						iconText = '中等';
+						break;
+					case 3:
+						iconText = '困难';
+						break;
+					default:
+						break;
+				}
+				return iconText;
 			}
 		}
 	}
@@ -106,23 +140,6 @@
 		margin-top: 5px;
 		line-height: 25px;
 	}
-	
-	.media-resume {
-		flex: 1;
-	}
-
-	.media-resume {
-		lines: 3;
-		text-overflow: ellipsis;
-		font-size: 15px;
-		color: #555555;
-	}
-
-	.media-resume2 {
-		flex: 1;
-		margin-top: 3px;
-		line-height: 20px;
-	}
 
 	.media-info {
 		flex-direction: row;
@@ -133,6 +150,18 @@
 		margin-right: 10px;
 		color: #999999;
 		font-size: 12px;
+	}
+
+	.easyIcon {
+		color: #39b54b;
+	}
+
+	.normalIcon {
+		color: #ffaa00;
+	}
+
+	.difficultIcon {
+		color: #ff3030;
 	}
 
 	.media-foot {
