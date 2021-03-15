@@ -20,10 +20,10 @@
 			"description": "题目类型：0 选择题 1 简述题",
 			"defaultValue": 0,
 			"enum": [{
-				"text": "无",
+				"text": "选择题",
 				"value": 0
 			}, {
-				"text": "有",
+				"text": "简述题",
 				"value": 1
 			}]
 		},
