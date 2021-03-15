@@ -15,7 +15,7 @@
 				<text class="info-text">{{questionItem.uploadDate}}</text>
 			</view>
 		</view>
-		<view class="media-item-line" style="position: absolute;"></view>
+		<view class="media-item-line"></view>
 	</view>
 </template>
 
