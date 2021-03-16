@@ -195,7 +195,7 @@
 			},
 			goDetail(detail) {
 				uni.navigateTo({
-					url: '/pages/tabbar/home/question',
+					url: '/pages/tabbar/home/question?detail='+ encodeURIComponent(JSON.stringify(detail)),
 				});
 			},
 			closeItem(index) {

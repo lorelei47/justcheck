@@ -47,6 +47,11 @@
 				"choice_content": {
 					"bsonType": "string",
 					"description": "选项内容"
+				},
+				"is_answer": {
+					"bsonType": "bool",
+					"description": "是否为正确选项: true 是, false 不是",
+					"defaultValue": false
 				}
 			}
 		},
