@@ -6,7 +6,7 @@
 			<text class="question-title-content">{{questionData.questionTitle}}</text>
 		</view>
 		<view class="question-content">
-			<text>写一个左中右布局占满屏幕，其中左右两块是固定宽度200 ，中间自适应宽，要求先加载中间块，请写出结构及样式</text>
+			<text>{{questionData.questionContent}}</text>
 		</view>
 		<view class="question-answer">
 			<view class="question-answer-option" v-if="isChoice">
@@ -21,7 +21,7 @@
 					<text>答案</text>
 				</view>
 				<view class="question-answer-content-content">
-					111111111111111111111111111
+					<text>{{questionData.questionAnswer}}</text>
 				</view>
 			</view>
 			<view class="question-answer-explain" v-if="isAnswer">
@@ -29,7 +29,7 @@
 					<text>解析</text>
 				</view>
 				<view class="question-answer-explain-content">
-					111111111111111111111111111
+					<text>{{questionData.questionAnswer}}</text>
 				</view>
 			</view>
 		</view>
@@ -43,7 +43,7 @@
 				isAnswer: false,
 				isChoice: true,
 				questionData: {},
-				questionTypeList: ['选择题','简答题'],
+				questionTypeList: ['选择题', '简答题'],
 				optionList: [{
 						"choice_code": "A",
 						"choice_content": "A",
@@ -61,8 +61,8 @@
 			this.questionData = JSON.parse(decodeURIComponent(option.detail));
 		},
 		methods: {
-			getQuestionType(e){
-				return [0,1].indexOf(e) != -1 ? this.questionTypeList[e] : '';
+			getQuestionType(e) {
+				return [0, 1].indexOf(e) != -1 ? this.questionTypeList[e] : '';
 			},
 			toAnswer(e) {
 				e.isAnswer ? this.bingo() : this.wrong();

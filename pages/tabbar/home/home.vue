@@ -149,7 +149,12 @@
 								uploadDate: timestampToTime(parseInt(question.upload_date)),
 								questionTitle: question.question_title,
 								questionTag: question.question_tag,
-								questionDifficulty: question.question_difficulty
+								questionDifficulty: question.question_difficulty,
+								questionContent: question.question_content,
+								questionOption: question.question_option,
+								questionAnswer: question.question_answer,
+								questionExplain: question.question_explain,
+								uploadUser: question.upload_user
 							};
 						});
 						
