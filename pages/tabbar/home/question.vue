@@ -1,5 +1,5 @@
 <template>
-	<view class="center">
+	<view class="center" @touchstart="start" @touchend="end">
 		<view class="question-line"></view>
 		<view class="question-title">
 			<text class="question-title-type cu-tag round sm">{{getQuestionType(questionData.questionType)}}</text>
@@ -10,8 +10,8 @@
 		</view>
 		<view class="question-answer">
 			<view class="question-answer-option" v-if="isChoice">
-				<view class="question-answer-option-item" @click="toAnswer(item,index)" v-for="(item, index) in questionData.questionOption"
-					:key="item.choice_code">
+				<view class="question-answer-option-item" @click="toAnswer(item,index)"
+					v-for="(item, index) in questionData.questionOption" :key="item.choice_code">
 					<text :class="questionAnswerOptionClass(index)">{{item.choice_code}}</text>
 					<text class="question-answer-option-content">{{item.choice_content}}</text>
 				</view>
@@ -57,7 +57,8 @@
 			questionAnswerOptionClass: function() {
 				return function(index) {
 					return {
-						'question-answer-option-code': this.clickOptionTrue != index && this.clickOptionfalse != index,
+						'question-answer-option-code': this.clickOptionTrue != index && this.clickOptionfalse !=
+							index,
 						'question-answer-option-true': this.clickOptionTrue == index,
 						'question-answer-option-false': this.clickOptionfalse == index,
 					}
@@ -68,8 +69,8 @@
 			getQuestionType(e) {
 				return [0, 1].indexOf(e) != -1 ? this.questionTypeList[e] : '';
 			},
-			toAnswer(e,i) {
-				if(this.isAnswer){
+			toAnswer(e, i) {
+				if (this.isAnswer) {
 					return;
 				}
 				this.isAnswer = true;
@@ -80,6 +81,26 @@
 			},
 			wrong(e) {
 				this.clickOptionfalse = e;
+			},
+			start(e) {
+				this.startData.clientX = e.changedTouches[0].clientX;
+				this.startData.clientY = e.changedTouches[0].clientY;
+			},
+			end(e) {
+				// console.log(e)
+				const subX = e.changedTouches[0].clientX - this.startData.clientX;
+				const subY = e.changedTouches[0].clientY - this.startData.clientY;
+				if (subY > 50 || subY < -50) {
+					console.log('上下滑')
+				} else {
+					if (subX > 100) {
+						console.log('右滑')
+					} else if (subX < -100) {
+						console.log('左滑')
+					} else {
+						console.log('无效')
+					}
+				}
 			}
 		}
 	}
@@ -177,7 +198,7 @@
 							background-color: #00aa00;
 							font-weight: bold;
 						}
-						
+
 						.question-answer-option-false {
 							width: 20px;
 							height: 20px;
