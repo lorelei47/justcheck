@@ -27,3 +27,43 @@ exam check
 > day8 (20210316)
 - 题目页面样式与通信处理
 - Q1：关于在flex布局下，两个行内元素怎么按照顺序排列，第二个行内元素无法换行到第二行。
+
+> day9 (20210318)
+- 场景: 给v-for列表每个item添加事件，并且点击对应item时更改该item的class，其他item保持原样。
+- 解决方法：在需要更改class的标签绑定class,赋与computed计算。传入v-for时的index
+```html
+<text :class="fn(index)">
+```
+- 在data处设置浮标i，并且在computed中令需要更改显示的class值作index == this.i判断 ，当点击某个item时，赋予浮标i item的值下标值，此时computed中下标值与浮标i的值相同的项才会触发需要更改的class
+```
+//html
+<view class="question-answer-option-item" @click="toAnswer(index)" v-for="(item, index) in list"
+	:key="item.choice_code">
+	<text :class="questionAnswerOptionClass(index)">{{item.choice_code}}</text>
+</view>
+
+//script
+data() {
+	return {
+		clickOptionTrue: -1,
+		clickOptionfalse: -1,
+	}
+},
+computed: {
+	questionAnswerOptionClass: function(index) {
+		return function(index) {
+			return {
+				'question-answer-option-code': this.clickOptionTrue != index && this.clickOptionfalse != index,
+				'question-answer-option-true': this.clickOptionTrue == index,
+				'question-answer-option-false': this.clickOptionfalse == index,
+			}
+		}
+	}
+}
+methods: {
+	toAnswer(e) {
+		this.clickOptionTrue = e;
+	}
+}
+```
+- computed中需要才用return一个闭包函数才能进行传参，否则会保绑定class的computed不是一个function。

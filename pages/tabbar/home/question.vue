@@ -10,9 +10,9 @@
 		</view>
 		<view class="question-answer">
 			<view class="question-answer-option" v-if="isChoice">
-				<view class="question-answer-option-item" @click="toAnswer(item)" v-for="(item, index) in optionList"
+				<view class="question-answer-option-item" @click="toAnswer(item,index)" v-for="(item, index) in questionData.questionOption"
 					:key="item.choice_code">
-					<text class="question-answer-option-code">{{item.choice_code}}</text>
+					<text :class="questionAnswerOptionClass(index)">{{item.choice_code}}</text>
 					<text class="question-answer-option-content">{{item.choice_content}}</text>
 				</view>
 			</view>
@@ -29,7 +29,7 @@
 					<text>解析</text>
 				</view>
 				<view class="question-answer-explain-content">
-					<text>{{questionData.questionAnswer}}</text>
+					<text>{{questionData.questionExplain}}</text>
 				</view>
 			</view>
 		</view>
@@ -44,34 +44,42 @@
 				isChoice: true,
 				questionData: {},
 				questionTypeList: ['选择题', '简答题'],
-				optionList: [{
-						"choice_code": "A",
-						"choice_content": "A",
-						"isAnswer": 0
-					},
-					{
-						"choice_code": "B",
-						"choice_content": "B",
-						"isAnswer": 1
-					}
-				],
+				clickOptionTrue: -1,
+				clickOptionfalse: -1,
 			}
 		},
 		onLoad(option) {
+			this.clickOptionTrue = -1;
+			this.cclickOptionfalse = -1;
 			this.questionData = JSON.parse(decodeURIComponent(option.detail));
+		},
+		computed: {
+			questionAnswerOptionClass: function() {
+				return function(index) {
+					return {
+						'question-answer-option-code': this.clickOptionTrue != index && this.clickOptionfalse != index,
+						'question-answer-option-true': this.clickOptionTrue == index,
+						'question-answer-option-false': this.clickOptionfalse == index,
+					}
+				}
+			}
 		},
 		methods: {
 			getQuestionType(e) {
 				return [0, 1].indexOf(e) != -1 ? this.questionTypeList[e] : '';
 			},
-			toAnswer(e) {
-				e.isAnswer ? this.bingo() : this.wrong();
+			toAnswer(e,i) {
+				if(this.isAnswer){
+					return;
+				}
+				this.isAnswer = true;
+				e.is_answer ? this.bingo(i) : this.wrong(i);
 			},
 			bingo(e) {
-				this.isAnswer = true;
+				this.clickOptionTrue = e;
 			},
 			wrong(e) {
-
+				this.clickOptionfalse = e;
 			}
 		}
 	}
@@ -154,7 +162,31 @@
 							line-height: 20px;
 							text-align: center;
 							border-radius: 50%;
-							border: #0FAEFF 1px solid;
+							border: #afd4e7 1px solid;
+							font-weight: bold;
+						}
+
+						.question-answer-option-true {
+							width: 20px;
+							height: 20px;
+							line-height: 20px;
+							text-align: center;
+							border-radius: 50%;
+							color: #FFFFFF;
+							border: #00aa00 1px solid;
+							background-color: #00aa00;
+							font-weight: bold;
+						}
+						
+						.question-answer-option-false {
+							width: 20px;
+							height: 20px;
+							line-height: 20px;
+							text-align: center;
+							border-radius: 50%;
+							color: #FFFFFF;
+							border: #ff0000 1px solid;
+							background-color: #ff0000;
 							font-weight: bold;
 						}
 
