@@ -50,10 +50,10 @@
 		// "backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
-		"borderStyle": "#237f41",
-		"backgroundColor": "#237f41",
-		"color": "#ffffff",
-		"selectedColor": "#00ff48",
+		"borderStyle": "#a5a5a5",
+		"backgroundColor": "#f1f1f1",
+		"color": "#bfbfbf",
+		"selectedColor": "#515151",
 		//icon来源：https://www.iconfont.cn/collections/detail?spm=a313x.7781069.1998910419.d9df05512&cid=317
 		"list": [{
 			"pagePath": "pages/tabbar/home/home",

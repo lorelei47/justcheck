@@ -143,8 +143,7 @@
 						
 						const data_list = data.map((question) => {
 							return {
-								id: this.newGuid() + question.id,
-								questionid: question.id,
+								questionId: question._id,
 								questionType: question.question_type,
 								uploadDate: timestampToTime(parseInt(question.upload_date)),
 								questionTitle: question.question_title,

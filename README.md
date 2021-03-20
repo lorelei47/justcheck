@@ -67,3 +67,6 @@ methods: {
 }
 ```
 - computed中需要才用return一个闭包函数才能进行传参，否则会保绑定class的computed不是一个function。
+
+> day10 (20210320)
+-  试题页面难度选项

@@ -1,6 +1,6 @@
 <template>
 	<view class="center" @touchstart="start" @touchend="end">
-		<view class="question-line"></view>
+		<!-- <view class="question-line"></view> -->
 		<view class="question-title">
 			<text class="question-title-type cu-tag round sm">{{getQuestionType(questionData.questionType)}}</text>
 			<text class="question-title-content">{{questionData.questionTitle}}</text>
@@ -12,7 +12,8 @@
 			<view class="question-answer-option" v-if="isChoice">
 				<view class="question-answer-option-item" @click="toAnswer(item,index)"
 					v-for="(item, index) in questionData.questionOption" :key="item.choice_code">
-					<text :class="questionAnswerOptionClass(index)">{{item.choice_code}}</text>
+					<text
+						:class="questionAnswerOptionClass(index)">{{questionOptionStatus(item.choice_code,index)}}</text>
 					<text class="question-answer-option-content">{{item.choice_content}}</text>
 				</view>
 			</view>
@@ -40,18 +41,38 @@
 	export default {
 		data() {
 			return {
+				isNoData: false,
 				isAnswer: false,
 				isChoice: true,
 				questionData: {},
 				questionTypeList: ['选择题', '简答题'],
-				clickOptionTrue: -1,
-				clickOptionfalse: -1,
+				clickOptionTrue: -1, //下标，选对的时候
+				clickOptionfalse: -1, //下标，选错的时候
+				startData: {
+					clientX: 0,
+					clientY: 0
+				}
 			}
 		},
 		onLoad(option) {
 			this.clickOptionTrue = -1;
 			this.cclickOptionfalse = -1;
 			this.questionData = JSON.parse(decodeURIComponent(option.detail));
+			// uniCloud.callFunction({
+			// 	name: 'question-handler',
+			// 	data: {
+			// 		action: 'question-item',
+			// 		param: {
+			// 			questionId: this.questionData.questionId
+			// 		}
+			// 	},
+			// 	success: (res) => {
+			// 		const data = res.result.data;
+			// 		this.isNoData = (data.length <= 0);
+			// 		this.questionData = data[0];
+			// 		console,log();
+			// 	}
+			// });
 		},
 		computed: {
 			questionAnswerOptionClass: function() {
@@ -61,6 +82,17 @@
 							index,
 						'question-answer-option-true': this.clickOptionTrue == index,
 						'question-answer-option-false': this.clickOptionfalse == index,
+					}
+				}
+			},
+			questionOptionStatus: function() {
+				return function(choiceCode, index) {
+					if (this.clickOptionTrue == index) {
+						return '√';
+					} else if (this.clickOptionfalse == index) {
+						return '×';
+					} else {
+						return choiceCode;
 					}
 				}
 			}
@@ -87,7 +119,6 @@
 				this.startData.clientY = e.changedTouches[0].clientY;
 			},
 			end(e) {
-				// console.log(e)
 				const subX = e.changedTouches[0].clientX - this.startData.clientX;
 				const subY = e.changedTouches[0].clientY - this.startData.clientY;
 				if (subY > 50 || subY < -50) {
@@ -132,6 +163,7 @@
 			flex-direction: column;
 			margin: 10px;
 			padding: 5px;
+			width: 100;vw
 
 			.question-line {
 				margin-top: 25px;
@@ -197,6 +229,8 @@
 							border: #00aa00 1px solid;
 							background-color: #00aa00;
 							font-weight: bold;
+							font-family: initial;
+							font-size: 17px;
 						}
 
 						.question-answer-option-false {
@@ -209,6 +243,8 @@
 							border: #ff0000 1px solid;
 							background-color: #ff0000;
 							font-weight: bold;
+							font-family: cursive;
+							font-size: 17px;
 						}
 
 						.question-answer-option-content {

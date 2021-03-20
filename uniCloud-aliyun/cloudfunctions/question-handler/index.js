@@ -10,7 +10,7 @@ const dbCmd = db.command
 exports.main = async (event, context) => {
 	let params = event.param || {};
 	//event为客户端上传的参数
-	console.log('event : ', event);
+	console.log('event : ', params);
 
 	let res = {};
 
@@ -21,6 +21,15 @@ exports.main = async (event, context) => {
 			res = {
 				code: 0,
 				...questionList
+			}
+			break;
+		case 'question-item':
+			const questionItemCollection = db.collection('question-list');
+			let questionItem = await questionItemCollection.where({
+				_id: params.questionId
+			}).get();
+			res = {
+				...questionItem
 			}
 			break;
 		default:
