@@ -10,7 +10,7 @@
 		</view>
 		<view class="question-answer">
 			<view class="question-answer-option" v-if="isChoice">
-				<view class="question-answer-option-item" @click="toAnswer(item,index)"
+				<view class="question-answer-option-item" :class="toCtrlClass" @click="toAnswer(item,index)"
 					v-for="(item, index) in questionData.questionOption" :key="item.choice_code">
 					<text
 						:class="questionAnswerOptionClass(index)">{{questionOptionStatus(item.choice_code,index)}}</text>
@@ -75,6 +75,7 @@
 			// });
 		},
 		computed: {
+			//选中时样式变更
 			questionAnswerOptionClass: function() {
 				return function(index) {
 					return {
@@ -85,6 +86,7 @@
 					}
 				}
 			},
+			//选中时选项头文本变更，选中则显示√，选错则为×
 			questionOptionStatus: function() {
 				return function(choiceCode, index) {
 					if (this.clickOptionTrue == index) {
@@ -94,6 +96,12 @@
 					} else {
 						return choiceCode;
 					}
+				}
+			},
+			//控制点击伪类显示
+			toCtrlClass: function(){
+				return {
+					'onActive': !this.isAnswer,
 				}
 			}
 		},
@@ -163,7 +171,7 @@
 			flex-direction: column;
 			margin: 10px;
 			padding: 5px;
-			width: 100;vw
+			width: 100vw;
 
 			.question-line {
 				margin-top: 25px;
@@ -251,7 +259,8 @@
 							margin-left: 15px;
 							vertical-align: middle;
 						}
-
+					}
+					.onActive{
 						&:active {
 							background-color: #EEEEEE;
 						}
