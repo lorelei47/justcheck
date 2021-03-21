@@ -50,7 +50,7 @@
 </template>
 
 <script>
-	import examinationDetail from '@/pages/components/home/examination-detail.vue';
+	import examinationDetail from '@/pages/components/examination/examination-detail.vue';
 	export default {
 		components: {
 			examinationDetail

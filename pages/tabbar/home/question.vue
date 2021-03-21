@@ -17,6 +17,7 @@
 					<text class="question-answer-option-content">{{item.choice_content}}</text>
 				</view>
 			</view>
+			<view v-if="!isChoice">偷偷看一眼参考答案</view>
 			<view class="question-answer-content" v-if="isAnswer">
 				<view class="question-answer-content-title">
 					<text>答案</text>
@@ -58,21 +59,9 @@
 			this.clickOptionTrue = -1;
 			this.cclickOptionfalse = -1;
 			this.questionData = JSON.parse(decodeURIComponent(option.detail));
-			// uniCloud.callFunction({
-			// 	name: 'question-handler',
-			// 	data: {
-			// 		action: 'question-item',
-			// 		param: {
-			// 			questionId: this.questionData.questionId
-			// 		}
-			// 	},
-			// 	success: (res) => {
-			// 		const data = res.result.data;
-			// 		this.isNoData = (data.length <= 0);
-			// 		this.questionData = data[0];
-			// 		console,log();
-			// 	}
-			// });
+			if(this.questionData.questionType === 1){
+				this.isChoice = false;
+			}
 		},
 		computed: {
 			//选中时样式变更
