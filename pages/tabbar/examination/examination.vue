@@ -51,9 +51,6 @@
 
 <script>
 	import examinationDetail from '@/pages/components/home/examination-detail.vue';
-	// import {
-	// 	num
-	// } from '@/common/countdown.js';
 	export default {
 		components: {
 			examinationDetail
@@ -63,7 +60,6 @@
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
 				isBegin: true,
-				examDiff: null,
 				modalName: null,
 				modalContent: {},
 				questionDifficulty: [{
@@ -85,32 +81,11 @@
 				questionCount: 0,
 				hasDoneQuestionCount: 0,
 				loading: true,
-				minutes: 30,
-				seconds: 0,
+				minutes: "00",
+				seconds: "00",
+				timer: ""
 			};
 		},
-		// watch: {
-		// 	// 倒计时
-		// 	second: {
-		// 		handler(newVal) {
-		// 			this.num(newVal);
-		// 		},
-		// 	},
-		// 	// 倒计时
-		// 	minute: {
-		// 		handler(newVal) {
-		// 			this.num(newVal);
-		// 		},
-		// 	},
-		// },
-		// computed: {
-		// 	minute: function() {
-		// 		return this.num(this.minutes);
-		// 	},
-		// 	second: function() {
-		// 		return this.num(his.seconds);
-		// 	}
-		// },
 		methods: {
 			showModal(item, e) {
 				this.modalName = e.currentTarget.dataset.target;
@@ -120,35 +95,35 @@
 				this.modalName = null
 			},
 			toBegin(item) {
+				let time = 0;
 				this.isBegin = true;
-				this.examDiff = item.code;
-				// this.timer();
+				switch (item.code) {
+					case "easy":
+						this.minutes = "20";
+						this.seconds = "00";
+						time = 1200;
+						break;
+					case "normal":
+					case "difficult":
+						this.minutes = "30";
+						this.seconds = "00";
+						time = 1800;
+						break;
+					default:
+						break;
+				}
+				this.createCountdownTimer(time);
 			},
-			// // 倒计时
-			// num(n) {
-			// 	// 倒计时结束重新刷新页面
-			// 	if (this.minutes === 0 && this.seconds === 2) {
-			// 		// this.$message.warning('支付倒计时结束!即将刷新页面!');
-			// 	}
-			// 	if (this.minutes === 0 && this.seconds === 0) {
-			// 		// window.location.reload();
-			// 	}
-			// 	return n < 10 ? '0' + n : '' + n;
-			// },
-			// timer() {
-			// 	var _this = this;
-			// 	var time = window.setInterval(function() {
-			// 		if (_this.seconds === 0 && _this.minutes !== 0) {
-			// 			_this.seconds = 59;
-			// 			_this.minutes -= 1;
-			// 		} else if (_this.minutes === 0 && _this.seconds === 0) {
-			// 			_this.seconds = 0;
-			// 			window.clearInterval(time);
-			// 		} else {
-			// 			_this.seconds -= 1;
-			// 		}
-			// 	}, 1000);
-			// }
+			createCountdownTimer(time) {
+				this.timer = setInterval(() => {
+					time = time - 1;
+					this.minutes = parseInt(time / 60).toString().padStart(2, "0");
+					this.seconds = parseInt(time % 60).toString().padStart(2, "0");
+				}, 1000);
+			},
+			destroyCountdownTimer() {
+				clearInterval(this.timer);
+			}
 		}
 	}
 </script>
