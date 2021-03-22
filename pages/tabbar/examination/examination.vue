@@ -40,10 +40,20 @@
 				</text>
 			</view>
 			<view class="exam-question-main">
-				<examination-detail :questionItem="questionDetail"></examination-detail>
+				<examination-detail :questionDetail="questionDetail"></examination-detail>
 			</view>
 			<view class="exam-question-footer">
 
+			</view>
+		</view>
+		<view class="cu-modal" :class="modalName=='showModal'?'show':''">
+			<view class="cu-dialog">
+				<view class="cu-bar bg-white justify-end">
+					<view class="content">操作超时，请重试</view>
+					<view class="action" @tap="hideModal">
+						<text class="cuIcon-close text-red"></text>
+					</view>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -60,6 +70,7 @@
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
 				isBegin: false,
+				isCompele: false,
 				modalName: null,
 				modalContent: {},
 				questionDifficulty: [{
@@ -97,6 +108,7 @@
 				this.modalName = null
 			},
 			async toBegin(item) {
+				let _self = this;
 				await uniCloud.callFunction({
 					name: 'question-handler',
 					data: {
@@ -107,7 +119,6 @@
 					},
 					success: (res) => {
 						const data = res.result.data;
-						console.log(data);
 						const data_list = data.map((question) => {
 							return {
 								questionId: question._id,
@@ -119,29 +130,34 @@
 								questionExplain: question.question_explain,
 							};
 						});
-						this.questionList = data_list;
+						_self.questionList = data_list;
+						_self.questionCount = data_list.length;
+						_self.questionDetail = _self.questionList[0];
+						
+						let time = 0;
+						_self.isBegin = true;
+						switch (item.code) {
+							case "easy":
+								this.minutes = "20";
+								this.seconds = "00";
+								time = 1200;
+								break;
+							case "normal":
+							case "difficult":
+								this.minutes = "30";
+								this.seconds = "00";
+								time = 1800;
+								break;
+							default:
+								break;
+						}
+						_self.createCountdownTimer(time);
 					},
-					fail: (e) => {},
+					fail: (e) => {
+						_self.modalName = 'showModal';
+					},
 					complete: (e) => {}
 				});
-				let time = 0;
-				this.isBegin = true;
-				switch (item.code) {
-					case "easy":
-						this.minutes = "20";
-						this.seconds = "00";
-						time = 1200;
-						break;
-					case "normal":
-					case "difficult":
-						this.minutes = "30";
-						this.seconds = "00";
-						time = 1800;
-						break;
-					default:
-						break;
-				}
-				this.createCountdownTimer(time);
 			},
 			createCountdownTimer(time) {
 				this.timer = setInterval(() => {

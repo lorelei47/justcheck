@@ -73,3 +73,8 @@ methods: {
 
 > day11 (20210321)
 - 增加试题倒计时
+
+> day12 (20210322)
+- tips: encodeURIComponent()在编码的时候对带有%的字符串需要进行replace(/%/g,'%25')处理，否则会报异常
+- Q1: 在异步函数uniCloud.callFunction中直接使用this.XX无法赋值。
+- A1: 此时this指代的是异步函数，需要在异步函数前赋值vue的this到变量中。

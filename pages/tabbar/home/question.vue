@@ -175,6 +175,7 @@
 				.question-title-type {
 					background-color: #1cbbb4;
 					color: #eafff5;
+					box-shadow: 1px 2px 1px rgba(56, 160, 127, 0.2);
 				}
 
 				.question-title-content {
@@ -224,6 +225,7 @@
 							color: #FFFFFF;
 							border: #00aa00 1px solid;
 							background-color: #00aa00;
+							box-shadow: 1px 2px 1px rgba(0,170,0,0.33);
 							font-weight: bold;
 							font-family: initial;
 							font-size: 17px;
@@ -238,6 +240,7 @@
 							color: #FFFFFF;
 							border: #ff0000 1px solid;
 							background-color: #ff0000;
+							box-shadow: 1px 2px 1px rgba(255,0,0,0.33);
 							font-weight: bold;
 							font-family: cursive;
 							font-size: 17px;

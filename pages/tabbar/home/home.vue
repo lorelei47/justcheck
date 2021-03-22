@@ -130,6 +130,7 @@
 				this.isLoading = true;
 				this.isNoData = false;
 				this.requestParams.time = new Date().getTime() + '';
+				let _self = this;
 			
 				uniCloud.callFunction({
 					name: 'question-handler',
@@ -139,7 +140,7 @@
 					},
 					success: (res) => {
 						const data = res.result.data;
-						this.isNoData = (data.length <= 0);
+						_self.isNoData = (data.length <= 0);
 						
 						const data_list = data.map((question) => {
 							return {
@@ -158,33 +159,33 @@
 						});
 						
 						if (refresh) {
-							this.dataList = data_list;
-							this.requestParams.minId = 0;
+							_self.dataList = data_list;
+							_self.requestParams.minId = 0;
 						} else {
-							this.dataList = this.dataList.concat(data_list);
-							this.requestParams.minId = data[data.length - 1].id;
+							_self.dataList = _self.dataList.concat(data_list);
+							_self.requestParams.minId = data[data.length - 1].id;
 						}
 						
-						if (this.dataList.length > 0 && this._isWidescreen && this.dataList.length <= 10) {
-							this.goDetail(this.dataList[0]);
+						if (_self.dataList.length > 0 && _self._isWidescreen && _self.dataList.length <= 10) {
+							_self.goDetail(_self.dataList[0]);
 						}
 					},
 					fail: (e) => {
-						if (this.dataList.length == 0) {
-							this.isNoData = true;
+						if (_self.dataList.length == 0) {
+							_self.isNoData = true;
 						}
 					},
 					complete: (e) => {
-						this.isLoading = false;
+						_self.isLoading = false;
 						if (refresh) {
-							this.refreshing = false;
-							this.refreshFlag = false;
-							this.refreshText = "已刷新";
-							if (this.pullTimer) {
-								clearTimeout(this.pullTimer);
+							_self.refreshing = false;
+							_self.refreshFlag = false;
+							_self.refreshText = "已刷新";
+							if (_self.pullTimer) {
+								clearTimeout(_self.pullTimer);
 							}
-							this.pullTimer = setTimeout(() => {
-								this.pulling = false;
+							_self.pullTimer = setTimeout(() => {
+								_self.pulling = false;
 							}, 1000);
 						}
 					}
