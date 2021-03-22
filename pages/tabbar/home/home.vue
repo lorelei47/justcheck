@@ -199,7 +199,7 @@
 			},
 			goDetail(detail) {
 				uni.navigateTo({
-					url: '/pages/tabbar/home/question?detail='+ encodeURIComponent(JSON.stringify(detail)),
+					url: '/pages/tabbar/home/question?detail='+ encodeURIComponent(JSON.stringify(detail).replace(/%/g,"%25")),
 				});
 			},
 			closeItem(index) {

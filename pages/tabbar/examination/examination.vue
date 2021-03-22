@@ -40,7 +40,7 @@
 				</text>
 			</view>
 			<view class="exam-question-main">
-				<examination-detail></examination-detail>
+				<examination-detail :questionItem="questionDetail"></examination-detail>
 			</view>
 			<view class="exam-question-footer">
 
@@ -59,7 +59,7 @@
 			return {
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
-				isBegin: true,
+				isBegin: false,
 				modalName: null,
 				modalContent: {},
 				questionDifficulty: [{
@@ -83,7 +83,9 @@
 				loading: true,
 				minutes: "00",
 				seconds: "00",
-				timer: ""
+				timer: "",
+				questionList: [],
+				questionDetail: null
 			};
 		},
 		methods: {
@@ -94,7 +96,34 @@
 			hideModal(e) {
 				this.modalName = null
 			},
-			toBegin(item) {
+			async toBegin(item) {
+				await uniCloud.callFunction({
+					name: 'question-handler',
+					data: {
+						action: 'question-list',
+						param: {
+							questionNum: item.num
+						}
+					},
+					success: (res) => {
+						const data = res.result.data;
+						console.log(data);
+						const data_list = data.map((question) => {
+							return {
+								questionId: question._id,
+								questionType: question.question_type,
+								questionDifficulty: question.question_difficulty,
+								questionContent: question.question_content,
+								questionOption: question.question_option,
+								questionAnswer: question.question_answer,
+								questionExplain: question.question_explain,
+							};
+						});
+						this.questionList = data_list;
+					},
+					fail: (e) => {},
+					complete: (e) => {}
+				});
 				let time = 0;
 				this.isBegin = true;
 				switch (item.code) {

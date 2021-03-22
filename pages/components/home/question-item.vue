@@ -1,9 +1,9 @@
 <template>
-	<view class="media-item view" v-if="questionItem.questionTitle" @click="click">
+	<view class="media-item view" v-if="questionItem.questionContent" @click="click">
 		<view class="view flex-col">
 			<text class="question-type">{{typeTextIcon(questionItem.questionType)}}</text>
 			<text class="media-title"
-				:class="{'media-title2': questionItem.questionType === 1 || questionItem.questionType === 2}">{{questionItem.questionTitle}}</text>
+				:class="{'media-title2': questionItem.questionType === 1 || questionItem.questionType === 2}">{{questionItem.questionContent}}</text>
 		</view>
 		<view class="media-foot flex-row">
 			<view class="media-info flex-row">

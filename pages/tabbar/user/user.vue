@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<cu-custom bgColor="topTitle">
-			<block slot="content">个人中心</block>
+			<!-- <block slot="content">个人中心</block> -->
 		</cu-custom>
 		<view class="center">
 			<view class="logo" @click="bindLogin" :hover-class="!hasLogin ? 'logo-hover' : ''">

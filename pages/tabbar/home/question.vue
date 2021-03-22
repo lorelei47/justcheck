@@ -3,7 +3,7 @@
 		<!-- <view class="question-line"></view> -->
 		<view class="question-title">
 			<text class="question-title-type cu-tag round sm">{{getQuestionType(questionData.questionType)}}</text>
-			<text class="question-title-content">{{questionData.questionTitle}}</text>
+			<!-- <text class="question-title-content">{{questionData.questionTitle}}</text> -->
 		</view>
 		<view class="question-content">
 			<text>{{questionData.questionContent}}</text>
@@ -42,7 +42,6 @@
 	export default {
 		data() {
 			return {
-				isNoData: false,
 				isAnswer: false,
 				isChoice: true,
 				questionData: {},
