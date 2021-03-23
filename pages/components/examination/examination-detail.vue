@@ -4,7 +4,7 @@
 			<text class="question-title-type cu-tag round sm">{{getQuestionType(questionDetail.questionType)}}</text>
 		</view>
 		<view class="question-content">
-			<text>{{questionDetail.questionContent}}</text>
+			<text>{{questionDetail.rowId}}.{{questionDetail.questionContent}}</text>
 		</view>
 		<view class="question-answer">
 			<view class="question-answer-option" v-if="isChoice">
@@ -31,9 +31,9 @@
 		data() {
 			return {
 				examinationDetailValue: this.questionDetail,
-				isAnswer: this.questionDetail.userAnswer ? true : false,
+				isAnswer: this.questionDetail.userAnswer != null ? true : false,
 				isChoice: true,
-				clickOptionAnswer: this.questionDetail.userAnswer ? this.questionDetail.userAnswer : -1,
+				clickOptionAnswer: this.questionDetail.userAnswer != null ? this.questionDetail.userAnswer : -1,
 				questionTypeList: ['选择题', '简答题'],
 			}
 		},

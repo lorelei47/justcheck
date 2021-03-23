@@ -3,7 +3,7 @@
 		<cu-custom bgColor="topTitle">
 			<block slot="content">试题</block>
 		</cu-custom>
-		<view v-if="!isBegin" class="exam-choice" :style="[{marginTop: -CustomBar + 'px'}]">
+		<view v-if="!isBegin && !isCompele" class="exam-choice" :style="[{marginTop: -CustomBar + 'px'}]">
 			<view class="exam-choice-title">
 				<text>请选择难度</text>
 			</view>
@@ -29,7 +29,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="isBegin" class="exam-question" :style="[{marginTop: -CustomBar + 'px'}]">
+		<view v-if="isBegin && !isCompele" class="exam-question" :style="[{marginTop: -CustomBar + 'px'}]">
 			<view class="exam-question-title">
 				<view class="cu-progress round xs">
 					<view class="bg-red" :style="[{ width: loading ? progressWidth : ''}]"></view>
@@ -49,10 +49,27 @@
 					v-show="!isFirst">{{prveBtn}}</button>
 				<button class="cu-btn bg-green margin-tb-sm" @tap="toNext(rownum)">{{nextBtn}}</button>
 			</view>
+			<view class="cu-modal" :class="modalName=='completeModal'?'show':''">
+				<view class="cu-dialog">
+					<view class="cu-bar bg-white flex-direction">
+						<view class="padding-top">本次测试共有{{questionList.length}}小题</view>
+						<view>您已完成{{hasDoneQuestionCount}}小题</view>
+					</view>
+					<view class="cu-bar bg-white justify-center">
+						<view class="action">
+							<button class="cu-btn bg-green" @tap="submitExam">确认提交</button>
+							<button class="cu-btn line-green text-green margin-left" @tap="hideModal">检查一下</button>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view v-if="isCompele" class="exam-report" :style="[{marginTop: -CustomBar + 'px'}]">
+			
 		</view>
 		<view class="cu-modal" :class="modalName=='showModal'?'show':''">
 			<view class="cu-dialog">
-				<view class="cu-bar bg-white justify-end">
+				<view class="cu-bar bg-white justify-center">
 					<view class="content">操作超时，请重试</view>
 					<view class="action" @tap="hideModal">
 						<text class="cuIcon-close text-red"></text>
@@ -86,7 +103,6 @@
 				seconds: "00",
 				timer: "",
 				questionList: [],
-				questionDetail: null,
 				isFirst: true,
 				isLast: false,
 				prveBtn: '上一题',
@@ -114,11 +130,12 @@
 		},
 		watch: {
 			questionList: {
-				handler(value){
-					let len = value.filter((i)=>i.userAnswer !== null).length;
-					if(len > this.hasDoneQuestionCount){
+				handler(value) {
+					let len = value.filter((i) => i.userAnswer !== null).length;
+					if (len > this.hasDoneQuestionCount) {
 						this.hasDoneQuestionCount++;
-						this.progressWidth = Math.round(this.hasDoneQuestionCount/this.questionList.length,2) * 100 + '%';
+						this.progressWidth = Math.round(this.hasDoneQuestionCount / this.questionList.length * 10000, 2) /
+							100 + '%';
 					}
 				},
 				deep: true
@@ -141,6 +158,7 @@
 				this.modalName = null
 			},
 			async toBegin(item) {
+				this.hideModal();
 				let _self = this;
 				await uniCloud.callFunction({
 					name: 'question-handler',
@@ -154,7 +172,7 @@
 						const data = res.result.data;
 						_self.questionList = data.map((question, index) => {
 							return {
-								rowId: index,
+								rowId: index + 1,
 								questionId: question._id,
 								questionType: question.question_type,
 								questionDifficulty: question.question_difficulty,
@@ -165,8 +183,6 @@
 								userAnswer: null
 							};
 						});
-						// _self.questionCount = _self.questionList.length;
-						_self.questionDetail = _self.questionList[0];
 
 						let time = 0;
 						_self.isBegin = true;
@@ -187,6 +203,7 @@
 						}
 						_self.createCountdownTimer(time);
 						_self.progressWidth = '0%';
+						_self.hasDoneQuestionCount = 0;
 					},
 					fail: (e) => {
 						_self.modalName = 'showModal';
@@ -199,6 +216,9 @@
 					time = time - 1;
 					this.minutes = parseInt(time / 60).toString().padStart(2, "0");
 					this.seconds = parseInt(time % 60).toString().padStart(2, "0");
+					if(this.seconds === "00" && this.minutes === "00"){
+						this.submitExam();
+					}
 				}, 1000);
 			},
 			destroyCountdownTimer() {
@@ -227,7 +247,15 @@
 					} else {
 						this.isLast = false;
 					}
+				} else {
+					this.modalName = 'completeModal';
 				}
+			},
+			submitExam(e) {
+				this.hideModal();
+				this.destroyCountdownTimer();
+				this.isBegin = false;
+				this.isCompele = true;
 			}
 		}
 	}

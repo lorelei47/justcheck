@@ -78,3 +78,17 @@ methods: {
 - tips: encodeURIComponent()在编码的时候对带有%的字符串需要进行replace(/%/g,'%25')处理，否则会报异常
 - Q1: 在异步函数uniCloud.callFunction中直接使用this.XX无法赋值。
 - A1: 此时this指代的是异步函数，需要在异步函数前赋值vue的this到变量中。
+
+> day13 (20210323)
+- 增加试题页面，父级组件与子组件数据通信
+- tips: 子组件传值回父级组件，可通过以下方式
+```html
+//父级组件
+<examination-detail :questionDetail="getQuestionDetail"
+	@examinationDetailValue="getExaminationDetailValue" :key="examinationDetailKey">
+</examination-detail>
+//用@examinationDetailValue绑定父级method里面的getExaminationDetailValue
+
+//子组件通过method设置传值
+this.$emit("examinationDetailValue",this.examinationDetailValue);
+```
