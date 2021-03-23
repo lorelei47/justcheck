@@ -15,7 +15,6 @@
 				</view>
 			</view>
 		</view>
-		
 	</view>
 </template>
 
@@ -31,9 +30,10 @@
 		},
 		data() {
 			return {
-				isAnswer: false,
+				examinationDetailValue: this.questionDetail,
+				isAnswer: this.questionDetail.userAnswer ? true : false,
 				isChoice: true,
-				clickOptionAnswer: -1,
+				clickOptionAnswer: this.questionDetail.userAnswer ? this.questionDetail.userAnswer : -1,
 				questionTypeList: ['选择题', '简答题'],
 			}
 		},
@@ -55,6 +55,8 @@
 			toAnswer(e, i) {
 				this.isAnswer = true;
 				this.clickOptionAnswer = i;
+				this.examinationDetailValue.userAnswer = i;
+				this.$emit("examinationDetailValue",this.examinationDetailValue);
 			}
 		}
 	}
@@ -129,7 +131,7 @@
 							color: #FFFFFF;
 							border: #00aa00 1px solid;
 							background-color: #00aa00;
-							box-shadow: 1px 2px 1px rgba(0,170,0,0.33);
+							box-shadow: 1px 2px 1px rgba(0, 170, 0, 0.33);
 						}
 
 						.question-answer-option-content {
@@ -144,7 +146,6 @@
 						}
 					}
 				}
-
 			}
 		}
 	}

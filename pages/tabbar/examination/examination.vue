@@ -32,7 +32,7 @@
 		<view v-if="isBegin" class="exam-question" :style="[{marginTop: -CustomBar + 'px'}]">
 			<view class="exam-question-title">
 				<view class="cu-progress round xs">
-					<view class="bg-red" :style="[{ width: loading?'61.8%':''}]"></view>
+					<view class="bg-red" :style="[{ width: loading ? progressWidth : ''}]"></view>
 				</view>
 				<text class="count-down">
 					<text class="lg text-gray cuIcon-time"></text>
@@ -40,10 +40,14 @@
 				</text>
 			</view>
 			<view class="exam-question-main">
-				<examination-detail :questionDetail="questionDetail"></examination-detail>
+				<examination-detail :questionDetail="getQuestionDetail"
+					@examinationDetailValue="getExaminationDetailValue" :key="examinationDetailKey">
+				</examination-detail>
 			</view>
 			<view class="exam-question-footer">
-
+				<button class="cu-btn bg-green margin-tb-sm" @tap="toPrve(rownum)"
+					v-show="!isFirst">{{prveBtn}}</button>
+				<button class="cu-btn bg-green margin-tb-sm" @tap="toNext(rownum)">{{nextBtn}}</button>
 			</view>
 		</view>
 		<view class="cu-modal" :class="modalName=='showModal'?'show':''">
@@ -69,35 +73,64 @@
 			return {
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
+				progressWidth: '',
+				examinationDetailKey: 1,
 				isBegin: false,
 				isCompele: false,
 				modalName: null,
 				modalContent: {},
-				questionDifficulty: [{
-					code: 'easy',
-					name: '简单',
-					explain: '本测验共有20道题，请在20分钟内完成',
-					num: 20,
-				}, {
-					code: 'normal',
-					name: '普通',
-					explain: '本测验共有30道题，请在30分钟内完成',
-					num: 30,
-				}, {
-					code: 'difficult',
-					name: '困难',
-					explain: '本测验共有50道题，请在30分钟内完成',
-					num: 50,
-				}],
-				questionCount: 0,
+				questionDifficulty: [],
 				hasDoneQuestionCount: 0,
 				loading: true,
 				minutes: "00",
 				seconds: "00",
 				timer: "",
 				questionList: [],
-				questionDetail: null
+				questionDetail: null,
+				isFirst: true,
+				isLast: false,
+				prveBtn: '上一题',
+				nextBtn: '下一题',
+				rownum: 0 //题目游标
 			};
+		},
+		created() {
+			this.questionDifficulty = [{
+				code: 'easy',
+				name: '简单',
+				explain: '本测验共有20道题，请在20分钟内完成',
+				num: 20,
+			}, {
+				code: 'normal',
+				name: '普通',
+				explain: '本测验共有30道题，请在30分钟内完成',
+				num: 30,
+			}, {
+				code: 'difficult',
+				name: '困难',
+				explain: '本测验共有50道题，请在30分钟内完成',
+				num: 50,
+			}]
+		},
+		watch: {
+			questionList: {
+				handler(value){
+					let len = value.filter((i)=>i.userAnswer !== null).length;
+					if(len > this.hasDoneQuestionCount){
+						this.hasDoneQuestionCount++;
+						this.progressWidth = Math.round(this.hasDoneQuestionCount/this.questionList.length,2) * 100 + '%';
+					}
+				},
+				deep: true
+			},
+			getQuestionDetail() {
+				this.examinationDetailKey++;
+			}
+		},
+		computed: {
+			getQuestionDetail: function() {
+				return this.questionList[this.rownum];
+			}
 		},
 		methods: {
 			showModal(item, e) {
@@ -119,8 +152,9 @@
 					},
 					success: (res) => {
 						const data = res.result.data;
-						const data_list = data.map((question) => {
+						_self.questionList = data.map((question, index) => {
 							return {
+								rowId: index,
 								questionId: question._id,
 								questionType: question.question_type,
 								questionDifficulty: question.question_difficulty,
@@ -128,12 +162,12 @@
 								questionOption: question.question_option,
 								questionAnswer: question.question_answer,
 								questionExplain: question.question_explain,
+								userAnswer: null
 							};
 						});
-						_self.questionList = data_list;
-						_self.questionCount = data_list.length;
+						// _self.questionCount = _self.questionList.length;
 						_self.questionDetail = _self.questionList[0];
-						
+
 						let time = 0;
 						_self.isBegin = true;
 						switch (item.code) {
@@ -152,6 +186,7 @@
 								break;
 						}
 						_self.createCountdownTimer(time);
+						_self.progressWidth = '0%';
 					},
 					fail: (e) => {
 						_self.modalName = 'showModal';
@@ -168,6 +203,31 @@
 			},
 			destroyCountdownTimer() {
 				clearInterval(this.timer);
+			},
+			getExaminationDetailValue(data) {
+				this.questionList[this.rownum] = data;
+			},
+			toPrve(e) {
+				this.rownum = e - 1;
+				this.isLast = false;
+				this.nextBtn = '下一题';
+				if (this.rownum == 0) {
+					this.isFirst = true;
+				} else {
+					this.isFirst = false;
+				}
+			},
+			toNext(e) {
+				if (!this.isLast) {
+					this.rownum = e + 1;
+					this.isFirst = false;
+					if (this.rownum == this.questionList.length - 1) {
+						this.isLast = true;
+						this.nextBtn = '完成';
+					} else {
+						this.isLast = false;
+					}
+				}
 			}
 		}
 	}
@@ -253,9 +313,23 @@
 
 			.exam-question-main {}
 
-			.exam-question-footer {}
+			.exam-question-footer {
+				position: relative;
+				margin-top: 20px;
+				height: auto;
 
-			width: 100vw;
+				button {
+					position: absolute;
+
+					&:nth-child(1) {
+						left: 20px;
+					}
+
+					&:nth-child(2) {
+						right: 20px;
+					}
+				}
+			}
 		}
 	}
 </style>
