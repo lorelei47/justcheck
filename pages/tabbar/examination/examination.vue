@@ -3,7 +3,13 @@
 		<cu-custom bgColor="topTitle">
 			<block slot="content">试题</block>
 		</cu-custom>
-		<view v-if="!isBegin && !isCompele" class="exam-choice" :style="[{marginTop: -CustomBar + 'px'}]">
+		<scroll-view scroll-x class="bg-white nav text-center" :style="[{marginTop: -CustomBar + 'px'}]">
+			<view class="cu-item" :class="item.tabCode==TabCur?'text-blue cur':''" v-for="(item,index) in tab"
+				:key="index" @tap="tabSelect" :data-cur="item.tabCode">
+				{{item.tabCur}}
+			</view>
+		</scroll-view>
+		<view v-if="!isBegin && !isCompele" class="exam-choice">
 			<view class="exam-choice-title">
 				<text>请选择难度</text>
 			</view>
@@ -29,7 +35,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="isBegin && !isCompele" class="exam-question" :style="[{marginTop: -CustomBar + 'px'}]">
+		<view v-if="isBegin && !isCompele" class="exam-question">
 			<view class="exam-question-title">
 				<view class="cu-progress round xs">
 					<view class="bg-red" :style="[{ width: loading ? progressWidth : ''}]"></view>
@@ -64,8 +70,8 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="isCompele" class="exam-report" :style="[{marginTop: -CustomBar + 'px'}]">
-			
+		<view v-if="isCompele" class="exam-report">
+			历史报告
 		</view>
 		<view class="cu-modal" :class="modalName=='showModal'?'show':''">
 			<view class="cu-dialog">
@@ -90,6 +96,9 @@
 			return {
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
+				tab: [],
+				TabCur: 'exam',
+				scrollLeft: 0,
 				progressWidth: '',
 				examinationDetailKey: 1,
 				isBegin: false,
@@ -126,7 +135,14 @@
 				name: '困难',
 				explain: '本测验共有50道题，请在30分钟内完成',
 				num: 50,
-			}]
+			}];
+			this.tab = [{
+				tabCur: '测试',
+				tabCode: 'exam'
+			}, {
+				tabCur: '记录',
+				tabCode: 'record'
+			}];
 		},
 		watch: {
 			questionList: {
@@ -150,6 +166,14 @@
 			}
 		},
 		methods: {
+			tabSelect(e) {
+				this.TabCur = e.currentTarget.dataset.cur;
+				if (this.TabCur == 'record') {
+					this.isCompele = true;
+				} else {
+					this.isCompele = false;
+				}
+			},
 			showModal(item, e) {
 				this.modalName = e.currentTarget.dataset.target;
 				this.modalContent = item;
@@ -216,7 +240,7 @@
 					time = time - 1;
 					this.minutes = parseInt(time / 60).toString().padStart(2, "0");
 					this.seconds = parseInt(time % 60).toString().padStart(2, "0");
-					if(this.seconds === "00" && this.minutes === "00"){
+					if (this.seconds === "00" && this.minutes === "00") {
 						this.submitExam();
 					}
 				}, 1000);
@@ -358,6 +382,10 @@
 					}
 				}
 			}
+		}
+
+		.exam-report {
+			width: 100vw;
 		}
 	}
 </style>
