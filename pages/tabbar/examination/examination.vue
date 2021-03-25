@@ -71,7 +71,13 @@
 			</view>
 		</view>
 		<view v-if="isCompele" class="exam-report">
-			历史报告
+			<view class="exam-report-title">历史报告</view>
+			<view class="exam-report-list">
+				<view class="exam-report-list-item" v-for="(item, index) in reportList" :key="index">
+					<text>{{item.examDifficult}}</text>
+					<text>{{item.time}}</text>
+				</view>
+			</view>
 		</view>
 		<view class="cu-modal" :class="modalName=='showModal'?'show':''">
 			<view class="cu-dialog">
@@ -116,7 +122,8 @@
 				isLast: false,
 				prveBtn: '上一题',
 				nextBtn: '下一题',
-				rownum: 0 //题目游标
+				rownum: 0, //题目游标
+				reportList: [{examDifficult: '简单', time: '2021-3-25 11:11:11'}]
 			};
 		},
 		created() {
@@ -386,6 +393,13 @@
 
 		.exam-report {
 			width: 100vw;
+			padding: 5px;
+			.exam-report-title {
+				
+			}
+			.exam-report-list {
+				
+			}
 		}
 	}
 </style>
