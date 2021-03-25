@@ -36,7 +36,7 @@ export function univerifyLogin() {
 										uni.setStorageSync('username', username)
 										uni.setStorageSync('login_type', 'online')
 
-										commit('login', username)
+										commit('userInfo/login', username)
 										resolve();
 
 										uni.switchTab({
