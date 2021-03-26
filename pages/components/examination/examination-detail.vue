@@ -137,6 +137,10 @@
 						.question-answer-option-content {
 							margin-left: 15px;
 							vertical-align: middle;
+							flex: 1;
+							lines: 1;
+							text-overflow: ellipsis;
+							overflow: hidden;
 						}
 					}
 

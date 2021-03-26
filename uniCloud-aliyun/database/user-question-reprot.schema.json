@@ -1,0 +1,50 @@
+// 文档教程: https://uniapp.dcloud.net.cn/uniCloud/schema
+{
+	"bsonType": "object",
+	"required": [],
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"from_user": {
+			"bsonType": "string",
+			"title": "所属用户",
+			"trim": "both"
+		},
+		"upload_time": {
+			"bsonType": "timestamp",
+			"description": "exam报告上传时间"
+		},
+		"exma_difficulty": {
+			"bsonType": "string",
+			"description": "exam难度",
+			"defaultValue": "easy",
+			"enum": [{
+				"text": "简单",
+				"value": "easy"
+			}, {
+				"text": "中等",
+				"value": "normal"
+			}, {
+				"text": "困难",
+				"value": "difficult"
+			}]
+		},
+		"question_list": {
+			"bsonType": "array",
+			"description": "exam的题目列表",
+			"arrayType":"object",
+			"properties": {
+				"question_id": {
+					"bsonType": "string",
+					"description": "关联question-list表的_id",
+					"foreignKey": "question-list._id"
+				},
+				"user_answer": {
+					"bsonType": "string",
+					"description": "用户的选择"
+				}
+			}
+		}
+	}
+}

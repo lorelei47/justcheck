@@ -55,11 +55,15 @@
 			}
 		},
 		onLoad(option) {
-			this.clickOptionTrue = -1;
-			this.cclickOptionfalse = -1;
-			this.questionData = JSON.parse(decodeURIComponent(option.detail));
-			if(this.questionData.questionType === 1){
-				this.isChoice = false;
+			if (JSON.stringify(option) === "{}") {
+				throw new Error("参数有误！");
+			}else{
+				this.clickOptionTrue = -1;
+				this.cclickOptionfalse = -1;
+				this.questionData = JSON.parse(decodeURIComponent(option.detail));
+				if (this.questionData.questionType === 1) {
+					this.isChoice = false;
+				}
 			}
 		},
 		computed: {
@@ -87,7 +91,7 @@
 				}
 			},
 			//控制点击伪类显示
-			toCtrlClass: function(){
+			toCtrlClass: function() {
 				return {
 					'onActive': !this.isAnswer,
 				}
@@ -225,7 +229,7 @@
 							color: #FFFFFF;
 							border: #00aa00 1px solid;
 							background-color: #00aa00;
-							box-shadow: 1px 2px 1px rgba(0,170,0,0.33);
+							box-shadow: 1px 2px 1px rgba(0, 170, 0, 0.33);
 							font-weight: bold;
 							font-family: initial;
 							font-size: 17px;
@@ -240,7 +244,7 @@
 							color: #FFFFFF;
 							border: #ff0000 1px solid;
 							background-color: #ff0000;
-							box-shadow: 1px 2px 1px rgba(255,0,0,0.33);
+							box-shadow: 1px 2px 1px rgba(255, 0, 0, 0.33);
 							font-weight: bold;
 							font-family: cursive;
 							font-size: 17px;
@@ -255,7 +259,8 @@
 							overflow: hidden;
 						}
 					}
-					.onActive{
+
+					.onActive {
 						&:active {
 							background-color: #EEEEEE;
 						}

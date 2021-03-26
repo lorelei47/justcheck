@@ -95,7 +95,7 @@
 			...mapState('user', ['userInfo'])
 		},
 		methods: {
-			...mapMutations(['logout']),
+			...mapMutations(['userStatus/logout']),
 			submit(event) {
 				const {
 					errors,

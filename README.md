@@ -92,3 +92,10 @@ methods: {
 //子组件通过method设置传值
 this.$emit("examinationDetailValue",this.examinationDetailValue);
 ```
+
+> day14 (20210326)
+- 1.增加了试题页面tab
+- 2.试题完成后提交。
+- Q1: vuex的使用，什么类型的数据需要用在vuex，比如试题页面的生成试题的questionList。1.答题使用，提交使用，答题完显示reprot使用。
+- Q2: vuex的module模式下的引用如...mapState等，如何区分属于哪个module下的state。
+- A2: todo

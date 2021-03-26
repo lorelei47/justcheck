@@ -271,9 +271,10 @@
 					if (subX > 100) {
 						console.log('左滑')
 					} else if (subX < -100) {
-						uni.navigateTo({
-							url: 'pages/tabbar/examination/examination',
-						});
+						console.log('右滑')
+						// uni.navigateTo({
+						// 	url: 'pages/tabbar/examination/examination',
+						// });
 					}
 				}
 			}

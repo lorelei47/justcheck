@@ -34,18 +34,32 @@ exports.main = async (event, context) => {
 			break;
 		case 'examination-question-list':
 			const examinationQuestionListCollection = db.collection('question-list');
-			let examinationQuestionList = await examinationQuestionListCollection.limit(params.questionNum).field({
-				_id: true,
-				question_type: true,
-				question_content: true,
-				question_option: true,
-				question_answer: true,
-				question_explain: true,
-				question_difficulty: true
-			}).get();
+			let examinationQuestionList = await examinationQuestionListCollection.limit(params.questionNum)
+				.field({
+					_id: true,
+					question_type: true,
+					question_content: true,
+					question_option: true,
+					question_answer: true,
+					question_explain: true,
+					question_difficulty: true
+				}).get();
 			res = {
 				code: 0,
 				...examinationQuestionList
+			}
+			break;
+		case 'submit-exam-reprot-data':
+			const userQuestionReprotCollection = db.collection('user-question-reprot');
+			let count = await userQuestionReprotCollection.add({
+				from_user: params.userName,
+				upload_time: uploadTime,
+				exma_difficulty: examDifficulty,
+				question_list: questionList
+			})
+			res = {
+				code: 0,
+				updateNum: count
 			}
 			break;
 		default:

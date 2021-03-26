@@ -3,7 +3,7 @@
 		<cu-custom bgColor="topTitle">
 			<block slot="content">试题</block>
 		</cu-custom>
-		<scroll-view scroll-x class="bg-white nav text-center" :style="[{marginTop: -CustomBar + 'px'}]">
+		<scroll-view scroll-x class="bg-white nav text-center fixed" :style="[{top:CustomBar + 'px'}]">
 			<view class="cu-item" :class="item.tabCode==TabCur?'text-blue cur':''" v-for="(item,index) in tab"
 				:key="index" @tap="tabSelect" :data-cur="item.tabCode">
 				{{item.tabCur}}
@@ -58,8 +58,12 @@
 			<view class="cu-modal" :class="modalName=='completeModal'?'show':''">
 				<view class="cu-dialog">
 					<view class="cu-bar bg-white flex-direction">
-						<view class="padding-top">本次测试共有{{questionList.length}}小题</view>
-						<view>您已完成{{hasDoneQuestionCount}}小题</view>
+						<view class="padding-top">本次测试共有<text
+								:class="questionList.length == hasDoneQuestionCount? 'text-green':'text-red'">{{questionList.length}}</text>小题
+						</view>
+						<view>您已完成<text
+								:class="questionList.length == hasDoneQuestionCount? 'text-green':'text-red'">{{hasDoneQuestionCount}}</text>小题
+						</view>
 					</view>
 					<view class="cu-bar bg-white justify-center">
 						<view class="action">
@@ -71,13 +75,18 @@
 			</view>
 		</view>
 		<view v-if="isCompele" class="exam-report">
-			<view class="exam-report-title">历史报告</view>
-			<view class="exam-report-list">
-				<view class="exam-report-list-item" v-for="(item, index) in reportList" :key="index">
-					<text>{{item.examDifficult}}</text>
-					<text>{{item.time}}</text>
+			<view class="exam-report-title cu-bar solid-bottom">
+				<view class="action">
+					<text class="cuIcon-title text-blue"></text>历史记录
 				</view>
 			</view>
+			<uni-list ref="list" scroll-y class="exam-report-list listview">
+				<view class="exam-report-list-item cu-bar solid-bottom" v-for="(item, index) in reportList"
+					:key="index">
+					<text class="text-xl padding text-bold">{{item.examDifficult}}</text>
+					<text class="text-black">{{item.time}}</text>
+				</view>
+			</uni-list>
 		</view>
 		<view class="cu-modal" :class="modalName=='showModal'?'show':''">
 			<view class="cu-dialog">
@@ -93,9 +102,15 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex';
+	import uniList from '@/pages/components/colorUi/uni-list.vue';
 	import examinationDetail from '@/pages/components/examination/examination-detail.vue';
 	export default {
 		components: {
+			uniList,
 			examinationDetail
 		},
 		data() {
@@ -109,6 +124,7 @@
 				examinationDetailKey: 1,
 				isBegin: false,
 				isCompele: false,
+				examDifficulty: null,
 				modalName: null,
 				modalContent: {},
 				questionDifficulty: [],
@@ -123,7 +139,7 @@
 				prveBtn: '上一题',
 				nextBtn: '下一题',
 				rownum: 0, //题目游标
-				reportList: [{examDifficult: '简单', time: '2021-3-25 11:11:11'}]
+				reportList: [],
 			};
 		},
 		created() {
@@ -150,6 +166,46 @@
 				tabCur: '记录',
 				tabCode: 'record'
 			}];
+			this.reportList = [{
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}, {
+				examDifficult: '简单',
+				time: '2021-3-25 11:11:11'
+			}]
 		},
 		watch: {
 			questionList: {
@@ -168,6 +224,7 @@
 			}
 		},
 		computed: {
+			...mapState(['userStatus/hasLogin', 'userStatus/forcedLogin', 'userStatus/userName']),
 			getQuestionDetail: function() {
 				return this.questionList[this.rownum];
 			}
@@ -232,6 +289,7 @@
 							default:
 								break;
 						}
+						_self.examDifficulty = item.code;
 						_self.createCountdownTimer(time);
 						_self.progressWidth = '0%';
 						_self.hasDoneQuestionCount = 0;
@@ -287,6 +345,38 @@
 				this.destroyCountdownTimer();
 				this.isBegin = false;
 				this.isCompele = true;
+				this.TabCur == 'record';
+				if (this.hasLogin) {
+
+				}
+			},
+			toSubmitExamData() {
+				return new Promise((resovle, reject) => {
+					uniCloud.callFunction({
+						name: 'question-handler',
+						data: {
+							action: 'submit-exam-reprot-data',
+							param: {
+								examDifficulty: this.examDifficulty,
+								questionList: this.questionList.map((item) => {
+									return {
+										question_id: item.questionId,
+										user_answer: StringObject.charAt(item.userAnswer + 97)//讲选项数字转成ascii码
+									}
+								}),
+								userName: this.userName,
+								uploadTime: new Date().getTime()
+							}
+						},
+						success: (res) => {
+							resovle();
+						},
+						fail: (e) => {
+							reject();
+						},
+						complete: (e) => {}
+					});
+				});
 			}
 		}
 	}
@@ -392,13 +482,19 @@
 		}
 
 		.exam-report {
+			height: calc(100% - 45px);
 			width: 100vw;
 			padding: 5px;
-			.exam-report-title {
-				
-			}
+
+			.exam-report-title {}
+
 			.exam-report-list {
-				
+				height: calc(100% - 50px);
+				padding: 10px;
+
+				.exam-report-list-item {
+					justify-content: space-around;
+				}
 			}
 		}
 	}

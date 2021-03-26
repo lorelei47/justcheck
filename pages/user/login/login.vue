@@ -84,7 +84,7 @@
 				captchaText: ''
 			}
 		},
-		computed: mapState(['forcedLogin', 'hasLogin', 'univerifyErrorMsg', 'hideUniverify']),
+		computed: mapState(['userStatus/forcedLogin', 'userStatus/hasLogin', 'userStatus/univerifyErrorMsg', 'userStatus/hideUniverify']),
 		onLoad() {
 			// #ifdef APP-PLUS
 			plus.oauth.getServices((services) => {
@@ -101,7 +101,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(['login']),
+			...mapMutations(['userStatus/login']),
 			initProvider() {
 				const filters = ['weixin', 'qq', 'sinaweibo', 'univerify'];
 				uni.getProvider({
