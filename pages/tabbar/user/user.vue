@@ -77,10 +77,14 @@
 			};
 		},
 		computed: {
-			...mapState(['userStatus/hasLogin', 'userStatus/forcedLogin', 'userStatus/userName'])
+			...mapState('userStatus', {
+				hasLogin: state=>state.hasLogin,
+				forcedLogin: state=>state.forcedLogin,
+				userName: state=>state.userName
+			})
 		},
 		methods: {
-			...mapMutations(['userStatus/logout']),
+			...mapMutations('userStatus',['logout']),
 			bindLogin() {
 				if (!this.hasLogin) {
 					univerifyLogin().catch(err => {

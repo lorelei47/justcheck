@@ -98,4 +98,9 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 - 2.试题完成后提交。
 - Q1: vuex的使用，什么类型的数据需要用在vuex，比如试题页面的生成试题的questionList。1.答题使用，提交使用，答题完显示reprot使用。
 - Q2: vuex的module模式下的引用如...mapState等，如何区分属于哪个module下的state。
-- A2: todo
+- A2: [modules后半页的命名简化](https://vuex.vuejs.org/zh/guide/modules.html)
+
+> day15 (20210327)
+- 1.保存用户测验作答记录。获取作答记录列表
+- 2.增加测验报告弹窗，查看详细作答记录
+- tips: 浅谈vue中fn()与fn: {}

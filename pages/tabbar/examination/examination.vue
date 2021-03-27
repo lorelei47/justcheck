@@ -1,7 +1,7 @@
 <template>
 	<view class="center">
 		<cu-custom bgColor="topTitle">
-			<block slot="content">试题</block>
+			<block slot="content">测验</block>
 		</cu-custom>
 		<scroll-view scroll-x class="bg-white nav text-center fixed" :style="[{top:CustomBar + 'px'}]">
 			<view class="cu-item" :class="item.tabCode==TabCur?'text-blue cur':''" v-for="(item,index) in tab"
@@ -9,7 +9,7 @@
 				{{item.tabCur}}
 			</view>
 		</scroll-view>
-		<view v-if="!isBegin && !isCompele" class="exam-choice">
+		<view v-if="!isBegin && !isRecord" class="exam-choice">
 			<view class="exam-choice-title">
 				<text>请选择难度</text>
 			</view>
@@ -35,7 +35,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="isBegin && !isCompele" class="exam-question">
+		<view v-if="isBegin && !isRecord" class="exam-question">
 			<view class="exam-question-title">
 				<view class="cu-progress round xs">
 					<view class="bg-red" :style="[{ width: loading ? progressWidth : ''}]"></view>
@@ -74,19 +74,39 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="isCompele" class="exam-report">
+		<view v-if="isRecord" class="exam-report">
 			<view class="exam-report-title cu-bar solid-bottom">
 				<view class="action">
 					<text class="cuIcon-title text-blue"></text>历史记录
 				</view>
 			</view>
 			<uni-list ref="list" scroll-y class="exam-report-list listview">
-				<view class="exam-report-list-item cu-bar solid-bottom" v-for="(item, index) in reportList"
-					:key="index">
-					<text class="text-xl padding text-bold">{{item.examDifficult}}</text>
-					<text class="text-black">{{item.time}}</text>
+				<view class="exam-report-list-item cu-bar solid-bottom" v-for="(item, index) in reportList" :key="index"
+					@tap="getRecordDetail(item.reportId)">
+					<text class="shadow bg-cyan">{{item.rowId}}</text>
+					<text class="text-xl radius shadow"
+						:class="getRecordDifficultyClass(item.examDifficulty)">{{getRecordDifficultyText(item.examDifficulty)}}</text>
+					<text class="text-gray">{{item.uploadTime}}</text>
 				</view>
 			</uni-list>
+			<view class="cu-modal report-modal" :class="modalName=='reportModal'?'show':''">
+				<view class="cu-dialog">
+					<view class="cu-bar bg-white justify-end">
+						<view class="content">测验结果</view>
+						<view class="action" @tap="hideModal">
+							<text class="cuIcon-close text-red"></text>
+						</view>
+					</view>
+					<view class="padding-xl">
+						<text>作答人: {{reportItem.from_user}}</text>
+						<text>测验难度: {{reportItem.exam_difficulty}}</text>
+						<text>测验时间: {{changeTimestampToTime(reportItem.upload_time)}}</text>
+					</view>
+					<view class="cu-bar bg-white justify-end">
+						
+					</view>
+				</view>
+			</view>
 		</view>
 		<view class="cu-modal" :class="modalName=='showModal'?'show':''">
 			<view class="cu-dialog">
@@ -104,8 +124,10 @@
 <script>
 	import {
 		mapState,
-		mapMutations
 	} from 'vuex';
+	import {
+		timestampToTime
+	} from '@/common/util.js';
 	import uniList from '@/pages/components/colorUi/uni-list.vue';
 	import examinationDetail from '@/pages/components/examination/examination-detail.vue';
 	export default {
@@ -123,7 +145,8 @@
 				progressWidth: '',
 				examinationDetailKey: 1,
 				isBegin: false,
-				isCompele: false,
+				isRecord: false,
+				isComplete: false,
 				examDifficulty: null,
 				modalName: null,
 				modalContent: {},
@@ -140,6 +163,7 @@
 				nextBtn: '下一题',
 				rownum: 0, //题目游标
 				reportList: [],
+				reportItem: {}
 			};
 		},
 		created() {
@@ -160,52 +184,15 @@
 				num: 50,
 			}];
 			this.tab = [{
-				tabCur: '测试',
+				tabCur: '测验',
 				tabCode: 'exam'
 			}, {
 				tabCur: '记录',
 				tabCode: 'record'
 			}];
-			this.reportList = [{
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}, {
-				examDifficult: '简单',
-				time: '2021-3-25 11:11:11'
-			}]
+			this.getRecordList().catch(err => {
+				console.log(err);
+			});
 		},
 		watch: {
 			questionList: {
@@ -224,18 +211,50 @@
 			}
 		},
 		computed: {
-			...mapState(['userStatus/hasLogin', 'userStatus/forcedLogin', 'userStatus/userName']),
+			...mapState('userStatus', {
+				hasLogin: state => state.hasLogin,
+				forcedLogin: state => state.forcedLogin,
+				userName: state => state.userName
+			}),
+			changeTimestampToTime: function(){
+				return function(time){
+					return timestampToTime(time);
+				}
+			},
 			getQuestionDetail: function() {
 				return this.questionList[this.rownum];
+			},
+			getRecordDifficultyText: function() {
+				return function(item) {
+					switch (item) {
+						case 'easy':
+							return '简单';
+						case 'normal':
+							return '中等';
+						case 'difficult':
+							return '困难';
+						default:
+							return '';
+					}
+				}
+			},
+			getRecordDifficultyClass: function() {
+				return function(item) {
+					return {
+						"bg-olive": item === 'easy',
+						"bg-orange": item === 'normal',
+						"bg-red": item === 'difficult'
+					}
+				}
 			}
 		},
 		methods: {
 			tabSelect(e) {
 				this.TabCur = e.currentTarget.dataset.cur;
 				if (this.TabCur == 'record') {
-					this.isCompele = true;
+					this.isRecord = true;
 				} else {
-					this.isCompele = false;
+					this.isRecord = false;
 				}
 			},
 			showModal(item, e) {
@@ -340,36 +359,52 @@
 					this.modalName = 'completeModal';
 				}
 			},
+			initExam() {
+
+			},
 			submitExam(e) {
 				this.hideModal();
 				this.destroyCountdownTimer();
 				this.isBegin = false;
-				this.isCompele = true;
-				this.TabCur == 'record';
+				this.isRecord = true;
+				this.TabCur = 'record';
 				if (this.hasLogin) {
-
+					this.toSubmitExamData().then(() => {
+						this.getRecordList().catch(err => {
+							console.log(err);
+						});
+					}).catch(err => {
+						console.log(err);
+					})
 				}
 			},
 			toSubmitExamData() {
 				return new Promise((resovle, reject) => {
+					let _self = this;
 					uniCloud.callFunction({
 						name: 'question-handler',
 						data: {
-							action: 'submit-exam-reprot-data',
+							action: 'submit-exam-report-data',
 							param: {
-								examDifficulty: this.examDifficulty,
-								questionList: this.questionList.map((item) => {
+								examDifficulty: _self.examDifficulty,
+								questionList: _self.questionList.map((item) => {
 									return {
 										question_id: item.questionId,
-										user_answer: StringObject.charAt(item.userAnswer + 97)//讲选项数字转成ascii码
+										user_answer: item.userAnswer ? String.fromCharCode(item
+											.userAnswer +
+											65) : '' //讲选项数字转成ascii码
 									}
 								}),
-								userName: this.userName,
+								userName: _self.userName,
 								uploadTime: new Date().getTime()
 							}
 						},
 						success: (res) => {
-							resovle();
+							if (res.result.code == 0) {
+								resovle();
+							} else {
+								reject();
+							}
 						},
 						fail: (e) => {
 							reject();
@@ -377,6 +412,67 @@
 						complete: (e) => {}
 					});
 				});
+			},
+			getRecordList() {
+				return new Promise((resovle, reject) => {
+					if (this.hasLogin) {
+						let _self = this;
+						uniCloud.callFunction({
+							name: 'question-handler',
+							data: {
+								action: 'get-report-List',
+								param: {
+									userName: _self.userName
+								}
+							},
+							success: (res) => {
+								if (res.result.code == 0) {
+									const data = res.result.data;
+									if (data.length > 0) {
+										_self.reportList = data.map((report, index) => {
+											return {
+												rowId: index + 1,
+												reportId: report._id,
+												uploadTime: timestampToTime(parseInt(report
+													.upload_time)),
+												examDifficulty: report.exam_difficulty,
+											};
+										});
+									}
+									resovle();
+								} else {
+									reject();
+								}
+							},
+							fail: (e) => {
+								reject();
+							},
+							complete: (e) => {}
+						});
+					} else {
+
+					}
+				});
+			},
+			async getRecordDetail(reportId) {
+				let _self = this;
+				await uniCloud.callFunction({
+					name: 'question-handler',
+					data: {
+						action: 'get-report-item',
+						param: {
+							reportId: reportId
+						}
+					},
+					success: (res) => {
+						if(res.result.affectedDocs > 0){
+							_self.reportItem = res.result.data[0];
+						}
+					},
+					fail: (e) => {},
+					complete: (e) => {}
+				})
+				this.modalName = 'reportModal';
 			}
 		}
 	}
@@ -422,17 +518,17 @@
 					text-align: center;
 
 					&:nth-child(1) {
-						background-color: #39b54a;
+						background-color: #8dc63f;
 						box-shadow: 6upx 6upx 8upx rgba(48, 156, 63, 0.2);
 					}
 
 					&:nth-child(2) {
-						background-color: #e58a3f;
+						background-color: #f37b1d;
 						box-shadow: 6upx 6upx 8upx rgba(217, 109, 26, 0.2);
 					}
 
 					&:nth-child(3) {
-						background-color: #e51114;
+						background-color: #e54d42;
 						box-shadow: 6upx 6upx 8upx rgba(204, 69, 59, 0.2);
 					}
 				}
@@ -489,11 +585,35 @@
 			.exam-report-title {}
 
 			.exam-report-list {
-				height: calc(100% - 50px);
+				height: calc(100vh - 200px);
 				padding: 10px;
 
 				.exam-report-list-item {
 					justify-content: space-around;
+
+					&:active {
+						background-color: #dfdfdf;
+					}
+
+					text {
+						&:nth-child(1) {
+							height: 25px;
+							width: 25px;
+							text-align: center;
+							line-height: 25px;
+							border-radius: 50%;
+						}
+
+						&:nth-child(2) {
+							padding: 3px 8px;
+						}
+					}
+				}
+			}
+
+			.report-modal {
+				.cu-dialog {
+					height: 80vh;
 				}
 			}
 		}

@@ -64,7 +64,7 @@
 			"pagePath": "pages/tabbar/examination/examination",
 			"iconPath": "static/img/tabbar/examination.png",
 			"selectedIconPath": "static/img/tabbar/examinationactive.png",
-			"text": "试题"
+			"text": "测验"
 		}, {
 			"pagePath": "pages/tabbar/user/user",
 			"iconPath": "static/img/tabbar/user.png",

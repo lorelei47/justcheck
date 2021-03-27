@@ -10,7 +10,8 @@ const dbCmd = db.command
 exports.main = async (event, context) => {
 	let params = event.param || {};
 	//event为客户端上传的参数
-	console.log('event : ', params);
+	console.log('event : ', event);
+	console.log('params : ', params);
 
 	let res = {};
 
@@ -29,6 +30,7 @@ exports.main = async (event, context) => {
 				_id: params.questionId
 			}).get();
 			res = {
+				code: 0,
 				...questionItem
 			}
 			break;
@@ -49,17 +51,41 @@ exports.main = async (event, context) => {
 				...examinationQuestionList
 			}
 			break;
-		case 'submit-exam-reprot-data':
-			const userQuestionReprotCollection = db.collection('user-question-reprot');
-			let count = await userQuestionReprotCollection.add({
+		case 'submit-exam-report-data':
+			const userQuestionReportCollection = db.collection('user-question-report');
+			let count = await userQuestionReportCollection.add({
 				from_user: params.userName,
-				upload_time: uploadTime,
-				exma_difficulty: examDifficulty,
-				question_list: questionList
+				upload_time: params.uploadTime,
+				exam_difficulty: params.examDifficulty,
+				question_list: params.questionList
 			})
 			res = {
 				code: 0,
 				updateNum: count
+			}
+			break;
+		case 'get-report-List':
+			const getReportListCollection = db.collection('user-question-report');
+			let userReportList = await getReportListCollection.where({
+				from_user: params.userName
+			}).field({
+				_id: true,
+				upload_time: true,
+				exam_difficulty: true
+			}).orderBy('upload_time', 'desc').get();
+			res = {
+				code: 0,
+				...userReportList
+			}
+			break;
+		case 'get-report-item':
+			const getReportItemCollection = db.collection('user-question-report');
+			let reportItem = await getReportItemCollection.where({
+				_id: params.reportId
+			}).get();
+			res = {
+				code: 0,
+				...reportItem
 			}
 			break;
 		default:

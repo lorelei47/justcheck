@@ -84,7 +84,12 @@
 				captchaText: ''
 			}
 		},
-		computed: mapState(['userStatus/forcedLogin', 'userStatus/hasLogin', 'userStatus/univerifyErrorMsg', 'userStatus/hideUniverify']),
+		computed: mapState('userStatus',{
+			forcedLogin: state=>state.forcedLogin,
+			hasLogin: state=>state.hasLogin,
+			univerifyErrorMsg: state=>state.univerifyErrorMsg,
+			hideUniverify: state=>state.hideUniverify
+		}),
 		onLoad() {
 			// #ifdef APP-PLUS
 			plus.oauth.getServices((services) => {
@@ -101,7 +106,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(['userStatus/login']),
+			...mapMutations('userStatus',['login']),
 			initProvider() {
 				const filters = ['weixin', 'qq', 'sinaweibo', 'univerify'];
 				uni.getProvider({

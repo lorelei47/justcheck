@@ -92,10 +92,10 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['userInfo'])
+			// ...mapState('user', ['userInfo'])
 		},
 		methods: {
-			...mapMutations(['userStatus/logout']),
+			...mapMutations('userStatus',['logout']),
 			submit(event) {
 				const {
 					errors,

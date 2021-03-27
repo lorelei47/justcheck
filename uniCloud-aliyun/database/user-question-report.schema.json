@@ -15,7 +15,7 @@
 			"bsonType": "timestamp",
 			"description": "exam报告上传时间"
 		},
-		"exma_difficulty": {
+		"exam_difficulty": {
 			"bsonType": "string",
 			"description": "exam难度",
 			"defaultValue": "easy",
