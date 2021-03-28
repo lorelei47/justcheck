@@ -6,6 +6,7 @@
 
 const db = uniCloud.database()
 const dbCmd = db.command
+const $ = dbCmd.aggregate
 
 exports.main = async (event, context) => {
 	let params = event.param || {};
@@ -57,6 +58,7 @@ exports.main = async (event, context) => {
 				from_user: params.userName,
 				upload_time: params.uploadTime,
 				exam_difficulty: params.examDifficulty,
+				exam_score: params.reportScore,
 				question_list: params.questionList
 			})
 			res = {
@@ -71,7 +73,8 @@ exports.main = async (event, context) => {
 			}).field({
 				_id: true,
 				upload_time: true,
-				exam_difficulty: true
+				exam_difficulty: true,
+				exam_score: true
 			}).orderBy('upload_time', 'desc').get();
 			res = {
 				code: 0,
@@ -83,6 +86,28 @@ exports.main = async (event, context) => {
 			let reportItem = await getReportItemCollection.where({
 				_id: params.reportId
 			}).get();
+			let reportItemQuestionList = await getReportItemCollection.aggregate().match({
+				_id: params.reportId
+			}).unwind({
+				path: '$question_list',
+				preserveNullAndEmptyArrays: true
+			}).replaceRoot({
+				newRoot: '$question_list'
+			}).lookup({
+				from: 'question-list',
+				let: {
+					questionId: '$question_id'
+				},
+				pipeline: $.pipeline()
+					.match(dbCmd.expr($.eq(['$_id', '$$questionId']))).done(),
+				as: "question_info"
+			}).project({
+				user_answer: 1,
+				question_info: 1
+			}).end();
+			
+			reportItem.data[0].question_list = reportItemQuestionList.data;
+
 			res = {
 				code: 0,
 				...reportItem

@@ -1,6 +1,8 @@
 # justcheck
 exam check
 
+### 开发日志
+
 > day1（20210305）
 - 创建底部选项卡
 
@@ -104,3 +106,17 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 - 1.保存用户测验作答记录。获取作答记录列表
 - 2.增加测验报告弹窗，查看详细作答记录
 - tips: 浅谈vue中fn()与fn: {}
+
+> day16 (20210328)
+- 测验模块功能实现
+- Q1: 本日难点在于，mongodb的数组字段元素为对象的关联查询。
+```json
+{
+	id: 1234,
+	list: [
+		{a: 1,b: 2},
+		{a: 2,b: 3}
+	]
+}
+在该文档中，a外键，关联另一个文档的主键。
+```

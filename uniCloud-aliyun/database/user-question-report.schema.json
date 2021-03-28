@@ -30,6 +30,11 @@
 				"value": "difficult"
 			}]
 		},
+		"exam_score": {
+			"bsonType": "int",
+			"description": "测验分数",
+			"defaultValue": 0
+		},
 		"question_list": {
 			"bsonType": "array",
 			"description": "exam的题目列表",

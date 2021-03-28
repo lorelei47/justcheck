@@ -86,6 +86,7 @@
 					<text class="shadow bg-cyan">{{item.rowId}}</text>
 					<text class="text-xl radius shadow"
 						:class="getRecordDifficultyClass(item.examDifficulty)">{{getRecordDifficultyText(item.examDifficulty)}}</text>
+					<text :class="item.examScore < 60 ? 'text-red' : 'text-green' ">{{item.examScore}}分</text>
 					<text class="text-gray">{{item.uploadTime}}</text>
 				</view>
 			</uni-list>
@@ -97,13 +98,33 @@
 							<text class="cuIcon-close text-red"></text>
 						</view>
 					</view>
-					<view class="padding-xl">
-						<text>作答人: {{reportItem.from_user}}</text>
-						<text>测验难度: {{reportItem.exam_difficulty}}</text>
-						<text>测验时间: {{changeTimestampToTime(reportItem.upload_time)}}</text>
+					<view class="cu-bar bg-white justify-around">
+						<view class="report-modal-info">
+							<view>作答人: {{reportItem.from_user}}</view>
+							<view>难度: {{getRecordDifficultyText(reportItem.exam_difficulty)}}</view>
+						</view>
+						<view class="report-modal-info">
+							<view>分数: {{reportItem.exam_score}}</view>
+							<view>{{changeTimestampToTime(reportItem.upload_time)}}</view>
+						</view>
 					</view>
-					<view class="cu-bar bg-white justify-end">
-						
+					<view class="report-modal-question">
+						<uni-list ref="list" scroll-y class="report-modal-question-list listview" :key="examinationDetailKey">
+							<view class="report-modal-question-list-item cu-bar solid-bottom"
+								v-for="(item, index) in reportItem.question_list" :key="index">
+								<view class="list-item-question-content">
+									<text>{{item.rowId}}.{{item.question_content}}</text>
+								</view>
+								<view class="list-item-question-option" v-for="(qo, idx) in item.question_option"
+									:key="idx">
+									<text :class="qo.is_answer ? 'bg-green' : ''">{{qo.choice_code}}</text>
+									<text>{{qo.choice_content}}</text>
+								</view>
+								<view class="list-item-user-answer">
+									<text>您选择的答案：{{item.user_answer}}</text>
+								</view>
+							</view>
+						</uni-list>
 					</view>
 				</view>
 			</view>
@@ -139,31 +160,30 @@
 			return {
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
-				tab: [],
-				TabCur: 'exam',
-				scrollLeft: 0,
-				progressWidth: '',
-				examinationDetailKey: 1,
-				isBegin: false,
-				isRecord: false,
-				isComplete: false,
-				examDifficulty: null,
-				modalName: null,
-				modalContent: {},
-				questionDifficulty: [],
-				hasDoneQuestionCount: 0,
-				loading: true,
-				minutes: "00",
-				seconds: "00",
-				timer: "",
-				questionList: [],
-				isFirst: true,
-				isLast: false,
+				tab: [], //tab列表
+				TabCur: 'exam', //tab选中样式
+				progressWidth: '', //答题完成情况进度条
+				examinationDetailKey: 1, //组件刷新key
+				isBegin: false, //是否开始答题
+				isRecord: false, //是否是查询记录
+				isComplete: false, //是否完成
+				examDifficulty: null, //测验难度
+				modalName: null, //当前模态框
+				modalContent: {}, //模态框内容
+				questionDifficulty: [], //测验各难度说明
+				hasDoneQuestionCount: 0, //已作答题目数
+				loading: true, //进度条开启
+				minutes: "00", //倒计时-分
+				seconds: "00", //倒计时-秒
+				timer: "", //计时器
+				questionList: [], //测验题目列表
+				isFirst: true, //是否处于第一题
+				isLast: false, //是否最后一题
 				prveBtn: '上一题',
 				nextBtn: '下一题',
 				rownum: 0, //题目游标
-				reportList: [],
-				reportItem: {}
+				reportList: [], //报告列表
+				reportItem: {} //测验报告明细
 			};
 		},
 		created() {
@@ -208,6 +228,9 @@
 			},
 			getQuestionDetail() {
 				this.examinationDetailKey++;
+			},
+			reportItem(){
+				this.examinationDetailKey++;
 			}
 		},
 		computed: {
@@ -216,8 +239,8 @@
 				forcedLogin: state => state.forcedLogin,
 				userName: state => state.userName
 			}),
-			changeTimestampToTime: function(){
-				return function(time){
+			changeTimestampToTime: function() {
+				return function(time) {
 					return timestampToTime(time);
 				}
 			},
@@ -292,7 +315,6 @@
 						});
 
 						let time = 0;
-						_self.isBegin = true;
 						switch (item.code) {
 							case "easy":
 								this.minutes = "20";
@@ -308,10 +330,9 @@
 							default:
 								break;
 						}
-						_self.examDifficulty = item.code;
 						_self.createCountdownTimer(time);
-						_self.progressWidth = '0%';
-						_self.hasDoneQuestionCount = 0;
+						_self.examDifficulty = item.code;
+						_self.initExam();
 					},
 					fail: (e) => {
 						_self.modalName = 'showModal';
@@ -360,7 +381,14 @@
 				}
 			},
 			initExam() {
-
+				this.isFirst = true;
+				this.isLast = false;
+				this.isBegin = true;
+				this.rownum = 0;
+				this.progressWidth = '0%';
+				this.hasDoneQuestionCount = 0;
+				this.nextBtn = '下一题';
+				this.reportItem = {};
 			},
 			submitExam(e) {
 				this.hideModal();
@@ -368,50 +396,96 @@
 				this.isBegin = false;
 				this.isRecord = true;
 				this.TabCur = 'record';
-				if (this.hasLogin) {
-					this.toSubmitExamData().then(() => {
-						this.getRecordList().catch(err => {
-							console.log(err);
-						});
-					}).catch(err => {
+
+				this.toSubmitExamData().then(() => {
+					this.getRecordList().catch(err => {
 						console.log(err);
-					})
-				}
+					});
+				}).catch(err => {
+					console.log(err);
+				})
 			},
 			toSubmitExamData() {
 				return new Promise((resovle, reject) => {
 					let _self = this;
-					uniCloud.callFunction({
-						name: 'question-handler',
-						data: {
-							action: 'submit-exam-report-data',
-							param: {
-								examDifficulty: _self.examDifficulty,
-								questionList: _self.questionList.map((item) => {
-									return {
-										question_id: item.questionId,
-										user_answer: item.userAnswer ? String.fromCharCode(item
-											.userAnswer +
-											65) : '' //讲选项数字转成ascii码
-									}
-								}),
-								userName: _self.userName,
-								uploadTime: new Date().getTime()
-							}
-						},
-						success: (res) => {
-							if (res.result.code == 0) {
-								resovle();
-							} else {
+					let score = _self.getReportScore(_self.questionList);
+					let answerTime = new Date().getTime();
+					if (this.hasLogin) {
+						uniCloud.callFunction({
+							name: 'question-handler',
+							data: {
+								action: 'submit-exam-report-data',
+								param: {
+									examDifficulty: _self.examDifficulty,
+									questionList: _self.questionList.map((item) => {
+										return {
+											question_id: item.questionId,
+											user_answer: item.userAnswer != null ? String
+												.fromCharCode(
+													item
+													.userAnswer +
+													65) : '' //讲选项数字转成ascii码
+										}
+									}),
+									reportScore: score,
+									userName: _self.userName,
+									uploadTime: answerTime
+								}
+							},
+							success: (res) => {
+								if (res.result.code == 0) {
+									resovle();
+								} else {
+									reject();
+								}
+							},
+							fail: (e) => {
 								reject();
-							}
-						},
-						fail: (e) => {
-							reject();
-						},
-						complete: (e) => {}
+							},
+							complete: (e) => {}
+						});
+					}
+					let arrQuestionList = _self.questionList.map((item, index) => {
+						return {
+							rowId: index + 1,
+							user_answer: item.userAnswer != null ? String
+								.fromCharCode(item
+									.userAnswer +
+									65) : '未答',
+							question_content: item.questionContent,
+							question_option: item.questionOption
+						}
 					});
+					_self.reportItem = {
+						exam_difficulty: _self.examDifficulty,
+						from_user: _self.userName,
+						upload_time: answerTime,
+						exam_score: score,
+						question_list: arrQuestionList
+					}
+					_self.modalName = 'reportModal';
 				});
+			},
+			getReportScore(questionList) {
+				if (!Array.isArray(questionList)) {
+					return;
+				}
+				let trueAnswerNum = 0;
+				questionList.map((item) => {
+					return {
+						answer: item.questionOption.filter((itemOption) => {
+							return itemOption.is_answer
+						}),
+						userAnswer: item.userAnswer
+					}
+				}).forEach((i) => {
+					if (i.answer[0].choice_code === (i.userAnswer != null ? String.fromCharCode(i
+							.userAnswer +
+							65) : '')) {
+						trueAnswerNum++;
+					}
+				});
+				return Math.floor(trueAnswerNum / questionList.length * 100);
 			},
 			getRecordList() {
 				return new Promise((resovle, reject) => {
@@ -436,6 +510,7 @@
 												uploadTime: timestampToTime(parseInt(report
 													.upload_time)),
 												examDifficulty: report.exam_difficulty,
+												examScore: report.exam_score
 											};
 										});
 									}
@@ -465,14 +540,24 @@
 						}
 					},
 					success: (res) => {
-						if(res.result.affectedDocs > 0){
+						if (res.result.affectedDocs > 0) {
 							_self.reportItem = res.result.data[0];
+							const data = res.result.data[0].question_list;
+							let arrQuestionList = data.map((item, index) => {
+								return {
+									rowId: index + 1,
+									user_answer: item.user_answer ? item.user_answer : '未答',
+									question_content: item.question_info[0].question_content,
+									question_option: item.question_info[0].question_option
+								}
+							});
+							_self.reportItem.question_list = arrQuestionList;
 						}
+						this.modalName = 'reportModal';
 					},
 					fail: (e) => {},
 					complete: (e) => {}
 				})
-				this.modalName = 'reportModal';
 			}
 		}
 	}
@@ -607,6 +692,14 @@
 						&:nth-child(2) {
 							padding: 3px 8px;
 						}
+						
+						&:nth-child(3) {
+							height: 25px;
+							width: 50px;
+							padding: 3px 8px;
+							line-height: 25px;
+							text-align: center;
+						}
 					}
 				}
 			}
@@ -614,6 +707,52 @@
 			.report-modal {
 				.cu-dialog {
 					height: 80vh;
+
+					.report-modal-info {
+						view {
+							margin: 10px 15px;
+						}
+					}
+
+					.report-modal-question {
+						padding: 5px;
+
+						.report-modal-question-list {
+							height: calc(80vh - 150px);
+
+							.report-modal-question-list-item {
+								flex-direction: column;
+								align-items: self-start;
+								margin: 10px 5px;
+								padding: 5px 15px;
+								font-size: 15px;
+								text-align: start;
+
+								.list-item-question-content {}
+
+								.list-item-question-option {
+									margin-top: 10px;
+
+									text {
+										&:nth-child(1) {
+											display: inline-block;
+											height: 20px;
+											width: 20px;
+											text-align: center;
+											line-height: 20px;
+											border-radius: 50%;
+											margin-right: 10px;
+											border: #39b54a 1px solid;
+										}
+									}
+								}
+
+								.list-item-user-answer {
+									margin-top: 10px;
+								}
+							}
+						}
+					}
 				}
 			}
 		}

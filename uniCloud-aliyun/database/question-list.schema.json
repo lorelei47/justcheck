@@ -1,6 +1,9 @@
 {
 	"bsonType": "object",
 	"required": [],
+	"permission": {
+		"read": true
+	},
 	"properties": {
 		"_id": {
 			"description": "ID，系统自动生成"
@@ -38,7 +41,7 @@
 		"question_option": {
 			"bsonType": "array",
 			"description": "题目选项",
-			"arrayType":"object",
+			"arrayType": "object",
 			"properties": {
 				"choice_code": {
 					"bsonType": "string",
@@ -79,7 +82,7 @@
 		"question_tag": {
 			"bsonType": "array",
 			"description": "题目标签",
-			"arrayType":"string"
+			"arrayType": "string"
 		},
 		"question_difficulty": {
 			"bsonType": "int",
