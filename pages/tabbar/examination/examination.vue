@@ -80,7 +80,12 @@
 					<text class="cuIcon-title text-blue"></text>历史记录
 				</view>
 			</view>
-			<uni-list ref="list" scroll-y class="exam-report-list listview">
+			<view class="exam-report-login" v-if="!hasLogin">
+				<view class="padding flex flex-direction">
+					<button class="cu-btn bg-green margin-tb-lg lg" @tap="toLogin">欢迎登录</button>
+				</view>
+			</view>
+			<uni-list v-if="hasLogin" ref="list" scroll-y class="exam-report-list listview">
 				<view class="exam-report-list-item cu-bar solid-bottom" v-for="(item, index) in reportList" :key="index"
 					@tap="getRecordDetail(item.reportId)">
 					<text class="shadow bg-cyan">{{item.rowId}}</text>
@@ -109,7 +114,8 @@
 						</view>
 					</view>
 					<view class="report-modal-question">
-						<uni-list ref="list" scroll-y class="report-modal-question-list listview" :key="examinationDetailKey">
+						<uni-list ref="list" scroll-y class="report-modal-question-list listview"
+							:key="examinationDetailKey">
 							<view class="report-modal-question-list-item cu-bar solid-bottom"
 								v-for="(item, index) in reportItem.question_list" :key="index">
 								<view class="list-item-question-content">
@@ -146,6 +152,9 @@
 	import {
 		mapState,
 	} from 'vuex';
+	import {
+		univerifyLogin
+	} from '@/common/univerify.js';
 	import {
 		timestampToTime
 	} from '@/common/util.js';
@@ -229,8 +238,13 @@
 			getQuestionDetail() {
 				this.examinationDetailKey++;
 			},
-			reportItem(){
+			reportItem() {
 				this.examinationDetailKey++;
+			},
+			hasLogin() {
+				this.getRecordList().catch((res) => {
+					console.log(res);
+				});
 			}
 		},
 		computed: {
@@ -286,6 +300,17 @@
 			},
 			hideModal(e) {
 				this.modalName = null
+			},
+			toLogin() {
+				if (!this.hasLogin) {
+					univerifyLogin().catch(err => {
+						if (err === false) return;
+
+						uni.navigateTo({
+							url: '/pages/user/login/login',
+						});
+					})
+				}
 			},
 			async toBegin(item) {
 				this.hideModal();
@@ -525,7 +550,7 @@
 							complete: (e) => {}
 						});
 					} else {
-
+						this.reportList = [];
 					}
 				});
 			},
@@ -669,6 +694,8 @@
 
 			.exam-report-title {}
 
+			.exam-report-login {}
+
 			.exam-report-list {
 				height: calc(100vh - 200px);
 				padding: 10px;
@@ -692,7 +719,7 @@
 						&:nth-child(2) {
 							padding: 3px 8px;
 						}
-						
+
 						&:nth-child(3) {
 							height: 25px;
 							width: 50px;
