@@ -35,18 +35,29 @@ exports.main = async (event, context) => {
 				...questionItem
 			}
 			break;
+		case 'get-random-question-item':
+			const getRandomQuestionItemCollection = db.collection('question-list');
+			let getRandomQuestionItem = await getRandomQuestionItemCollection.aggregate().sample({
+				size: 1
+			}).end();
+			res = {
+				code: 0,
+				...getRandomQuestionItem
+			}
+			break;
 		case 'examination-question-list':
 			const examinationQuestionListCollection = db.collection('question-list');
-			let examinationQuestionList = await examinationQuestionListCollection.limit(params.questionNum)
-				.field({
-					_id: true,
-					question_type: true,
-					question_content: true,
-					question_option: true,
-					question_answer: true,
-					question_explain: true,
-					question_difficulty: true
-				}).get();
+			let examinationQuestionList = await examinationQuestionListCollection.aggregate().sample({
+				size: params.questionNum
+			}).project({
+				_id: 1,
+				question_type: 1,
+				question_content: 1,
+				question_option: 1,
+				question_answer: 1,
+				question_explain: 1,
+				question_difficulty: 1
+			}).end();
 			res = {
 				code: 0,
 				...examinationQuestionList
@@ -105,7 +116,7 @@ exports.main = async (event, context) => {
 				user_answer: 1,
 				question_info: 1
 			}).end();
-			
+
 			reportItem.data[0].question_list = reportItemQuestionList.data;
 
 			res = {

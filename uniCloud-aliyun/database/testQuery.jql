@@ -6,29 +6,19 @@
 // 详细JQL语法，请参考 https://uniapp.dcloud.net.cn/uniCloud/clientdb?id=jsquery
 
 // 下面示例查询uni-id-users表的所有数据
-const dbCmd = db.command
-const $ = dbCmd.aggregate
-db.collection('user-question-report').aggregate().match({
-		_id: "605feab6bc7be50001e27709"
-	})
-	.unwind({
-		path: '$question_list',
-		preserveNullAndEmptyArrays: true
-	}).replaceRoot({
-		newRoot: '$question_list'
-	})
-	.lookup({
-		from: 'question-list',
-		let: {
-			questionId: '$question_id'
-		},
-		pipeline: $.pipeline()
-			.match(dbCmd.expr($.eq(['$_id', '$$questionId']))).done(),
-		as: "question_info"
-	}).project({
-		user_answer: 1,
-		question_info: 1
-	})
-	.end();
 
-// etReportItemCollection.where('_id == "605feab6bc7be50001e27709"').field('question_list').get();
+// db.collection('question-list').aggregate().sample({
+// 	size: 15
+// }).end();
+
+db.collection('question-list').aggregate().sample({
+	size: 15
+}).project({
+	_id: 1,
+	question_type: 1,
+	question_content: 1,
+	question_option: 1,
+	question_answer: 1,
+	question_explain: 1,
+	question_difficulty: 1
+}).end();

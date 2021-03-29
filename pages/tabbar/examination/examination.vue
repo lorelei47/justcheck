@@ -318,7 +318,7 @@
 				await uniCloud.callFunction({
 					name: 'question-handler',
 					data: {
-						action: 'question-list',
+						action: 'examination-question-list',
 						param: {
 							questionNum: item.num
 						}

@@ -57,7 +57,7 @@
 		onLoad(option) {
 			if (JSON.stringify(option) === "{}") {
 				throw new Error("参数有误！");
-			}else{
+			} else {
 				this.clickOptionTrue = -1;
 				this.cclickOptionfalse = -1;
 				this.questionData = JSON.parse(decodeURIComponent(option.detail));
@@ -98,6 +98,24 @@
 			}
 		},
 		methods: {
+			getRandomQuestion() {
+				return new Promise((resovle, reject) => {
+					uniCloud.callFunction({
+						name: "question-handler",
+						data: {
+							action: 'get-random-question-item',
+							param: {}
+						},
+						success: (res)=> {
+							
+						},
+						fail: (res) => {
+							reject();
+						},
+						complete: (res) => {}
+					})
+				});
+			},
 			getQuestionType(e) {
 				return [0, 1].indexOf(e) != -1 ? this.questionTypeList[e] : '';
 			},
