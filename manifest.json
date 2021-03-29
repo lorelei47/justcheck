@@ -41,7 +41,7 @@
             }
         },
         "uniStatistics" : {
-            "enable" : false
+            "enable" : true
         }
     },
     /* SDK配置 */
@@ -55,37 +55,37 @@
         },
         "usingComponents" : true,
         "uniStatistics" : {
-            "enable" : false
+            "enable" : true
         }
     },
     "uniStatistics" : {
-        "enable" : false
+        "enable" : true
     },
     "h5" : {
         "uniStatistics" : {
-            "enable" : false
+            "enable" : true
         },
         "title" : "justcheck",
         "template" : "index.html"
     },
     "mp-alipay" : {
         "uniStatistics" : {
-            "enable" : false
+            "enable" : true
         }
     },
     "mp-baidu" : {
         "uniStatistics" : {
-            "enable" : false
+            "enable" : true
         }
     },
     "mp-qq" : {
         "uniStatistics" : {
-            "enable" : false
+            "enable" : true
         }
     },
     "mp-toutiao" : {
         "uniStatistics" : {
-            "enable" : false
+            "enable" : true
         }
     }
 }
