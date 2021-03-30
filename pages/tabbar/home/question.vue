@@ -184,7 +184,7 @@
 				const subX = e.changedTouches[0].clientX - this.startData.clientX;
 				const subY = e.changedTouches[0].clientY - this.startData.clientY;
 				if (subY > 50 || subY < -50) {
-					this.getRandomQuestion();
+					// this.getRandomQuestion();
 				} else {
 					if (subX > 100) {
 						console.log('右滑')
