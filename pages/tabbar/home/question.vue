@@ -17,7 +17,11 @@
 					<text class="question-answer-option-content">{{item.choice_content}}</text>
 				</view>
 			</view>
-			<view v-if="!isChoice">偷偷看一眼参考答案</view>
+			<view class="question-sketch-btn" v-if="!isChoice">
+				<button class="cu-btn bg-green" @tap="openSketchAnswer">
+					<text class="question-sketch-btn-text">偷偷看一眼答案</text>
+				</button>
+			</view>
 			<view class="question-answer-content" v-if="isAnswer">
 				<view class="question-answer-content-title">
 					<text>答案</text>
@@ -34,11 +38,19 @@
 					<text>{{questionData.questionExplain}}</text>
 				</view>
 			</view>
+			<view class="question-answer-next" v-if="isAnswer">
+				<button class="cu-btn bg-green" @tap="nextQuestion">
+					<text class="question-sketch-btn-text">随机一题</text>
+				</button>
+			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		timestampToTime
+	} from '@/common/util.js';
 	export default {
 		data() {
 			return {
@@ -56,7 +68,7 @@
 		},
 		onLoad(option) {
 			if (JSON.stringify(option) === "{}") {
-				throw new Error("参数有误！");
+				this.getRandomQuestion();
 			} else {
 				this.clickOptionTrue = -1;
 				this.cclickOptionfalse = -1;
@@ -98,26 +110,55 @@
 			}
 		},
 		methods: {
+			initState() {
+				this.isAnswer = false;
+				this.clickOptionTrue = -1;
+				this.clickOptionfalse = -1;
+			},
 			getRandomQuestion() {
-				return new Promise((resovle, reject) => {
+				let _self = this;
+				return new Promise((resolve, reject) => {
 					uniCloud.callFunction({
 						name: "question-handler",
 						data: {
 							action: 'get-random-question-item',
 							param: {}
 						},
-						success: (res)=> {
-							
+						success: (res) => {
+							const data = res.result.data[0];
+							_self.questionData = {
+								questionId: data._id,
+								questionType: data.question_type,
+								uploadDate: timestampToTime(parseInt(data.upload_date)),
+								questionTitle: data.question_title,
+								questionTag: data.question_tag,
+								questionDifficulty: data.question_difficulty,
+								questionContent: data.question_content,
+								questionOption: data.question_option,
+								questionAnswer: data.question_answer,
+								questionExplain: data.question_explain,
+								uploadUser: data.upload_user
+							}
+							_self.initState();
+							resolve();
 						},
 						fail: (res) => {
-							reject();
+							reject(res);
 						},
 						complete: (res) => {}
 					})
 				});
 			},
+			nextQuestion() {
+				this.getRandomQuestion().catch((err)=>{
+					console.log(err)
+				});
+			},
 			getQuestionType(e) {
 				return [0, 1].indexOf(e) != -1 ? this.questionTypeList[e] : '';
+			},
+			openSketchAnswer() {
+				this.isAnswer = true;
 			},
 			toAnswer(e, i) {
 				if (this.isAnswer) {
@@ -140,7 +181,7 @@
 				const subX = e.changedTouches[0].clientX - this.startData.clientX;
 				const subY = e.changedTouches[0].clientY - this.startData.clientY;
 				if (subY > 50 || subY < -50) {
-					console.log('上下滑')
+					this.getRandomQuestion();
 				} else {
 					if (subX > 100) {
 						console.log('右滑')
@@ -285,6 +326,10 @@
 					}
 				}
 
+				.question-sketch-btn {}
+
+				.question-sketch-btn-text {}
+
 				.question-answer-content {
 					border-top: #d5dceb 2px dashed;
 					padding: 20px 10px 5px;
@@ -303,6 +348,10 @@
 					.question-answer-explain-content {
 						margin-top: 15px;
 					}
+				}
+				.question-answer-next {
+					margin-top: 15px;
+					justify-content: center;
 				}
 			}
 		}

@@ -47,7 +47,9 @@ exports.main = async (event, context) => {
 			break;
 		case 'examination-question-list':
 			const examinationQuestionListCollection = db.collection('question-list');
-			let examinationQuestionList = await examinationQuestionListCollection.aggregate().sample({
+			let examinationQuestionList = await examinationQuestionListCollection.aggregate().match({
+				question_type: 0
+			}).sample({
 				size: params.questionNum
 			}).project({
 				_id: 1,

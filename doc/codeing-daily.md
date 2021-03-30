@@ -117,3 +117,6 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 }
 在该文档中，a外键，关联另一个文档的主键。
 ```
+
+> day17 (20210330)
+- 增加随机一题功能
