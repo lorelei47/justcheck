@@ -111,6 +111,9 @@
 		},
 		methods: {
 			initState() {
+				if (this.questionData.questionType === 1) {
+					this.isChoice = false;
+				}
 				this.isAnswer = false;
 				this.clickOptionTrue = -1;
 				this.clickOptionfalse = -1;
