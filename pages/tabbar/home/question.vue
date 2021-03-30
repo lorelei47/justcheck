@@ -73,9 +73,7 @@
 				this.clickOptionTrue = -1;
 				this.cclickOptionfalse = -1;
 				this.questionData = JSON.parse(decodeURIComponent(option.detail));
-				if (this.questionData.questionType === 1) {
-					this.isChoice = false;
-				}
+				this.isChoice = this.questionData.questionType === 1 ? false : true;
 			}
 		},
 		computed: {
@@ -111,9 +109,7 @@
 		},
 		methods: {
 			initState() {
-				if (this.questionData.questionType === 1) {
-					this.isChoice = false;
-				}
+				this.isChoice = this.questionData.questionType === 1 ? false : true;
 				this.isAnswer = false;
 				this.clickOptionTrue = -1;
 				this.clickOptionfalse = -1;
