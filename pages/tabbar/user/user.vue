@@ -12,26 +12,26 @@
 				</view>
 			</view>
 			<view class="center-list">
-				<view class="center-list-item" v-show="hasLogin && hasPwd" @click="goto">
+				<view class="center-list-item" v-show="hasLogin && hasPwd" @click="resPwd">
 					<text class="list-icon">&#xe60f;</text>
 					<text class="list-text">修改密码</text>
 					<text class="navigat-arrow">&#xe65e;</text>
 				</view>
 			</view>
 			<view class="center-list">
-				<view v-if="hasLogin" class="center-list-item border-bottom">
+				<view class="center-list-item border-bottom" v-if="hasLogin" @click="addQuestion">
 					<text class="list-icon">&#xe65f;</text>
-					<text class="list-text">上传试题</text>
+					<text class="list-text">新增题目</text>
 					<text class="navigat-arrow">&#xe65e;</text>
 				</view>
-				<view class="center-list-item">
+				<view class="center-list-item" @click="feedback">
 					<text class="list-icon">&#xe60b;</text>
 					<text class="list-text">帮助与反馈</text>
 					<text class="navigat-arrow">&#xe65e;</text>
 				</view>
 			</view>
 			<view class="center-list">
-				<view class="center-list-item">
+				<view class="center-list-item" @click="aboutApp">
 					<text class="list-icon">&#xe614;</text>
 					<text class="list-text">关于应用</text>
 					<text class="navigat-arrow">&#xe65e;</text>
@@ -139,7 +139,7 @@
 					}
 				})
 			},
-			goto() {
+			resPwd() {
 				uni.navigateTo({
 					url: '/pages/user/pwd/update-password'
 				})
