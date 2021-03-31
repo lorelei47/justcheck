@@ -8,7 +8,7 @@
 		<view class="media-foot flex-row">
 			<view class="media-info flex-row">
 				<text class="info-text"
-					:class="difficultyIcon(questionItem.questionDifficulty)">{{difficultyText(questionItem.questionDifficulty)}}</text>
+					:class="[difficultyIcon(questionItem.questionDifficulty)]">{{difficultyText(questionItem.questionDifficulty)}}</text>
 				<text class="tag-icon" v-for="(item, index) in questionItem.questionTag">{{item}}</text>
 			</view>
 			<view class="media-info flex-row">

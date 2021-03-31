@@ -1,146 +1,148 @@
 <template>
 	<view class="center">
-		<cu-custom bgColor="topTitle">
+		<!-- 		<cu-custom bgColor="topTitle">
 			<block slot="content">测验</block>
-		</cu-custom>
-		<scroll-view scroll-x class="bg-white nav text-center fixed" :style="[{top:CustomBar + 'px'}]">
+		</cu-custom> -->
+		<scroll-view scroll-x class="bg-white nav text-center fixed">
 			<view class="cu-item" :class="item.tabCode==TabCur?'text-blue cur':''" v-for="(item,index) in tab"
 				:key="index" @tap="tabSelect" :data-cur="item.tabCode">
 				{{item.tabCur}}
 			</view>
 		</scroll-view>
-		<view v-if="!isBegin && !isRecord" class="exam-choice">
-			<view class="exam-choice-title">
-				<text>请选择难度</text>
-			</view>
-			<view class="choice-button">
-				<button v-for="(item, index) in questionDifficulty" :key="index" class="cu-btn bg-green shadow"
-					@tap="showModal(item,$event)" data-target="modal">{{item.name}}</button>
-			</view>
-			<view class="cu-modal" :class="modalName=='modal'?'show':''">
-				<view class="cu-dialog">
-					<view class="cu-bar bg-white justify-end">
-						<view class="content">{{modalContent.name}}</view>
-						<view class="action" @tap="hideModal">
-							<text class="cuIcon-close text-red"></text>
-						</view>
-					</view>
-					<view class="padding-xl">{{modalContent.explain}}</view>
-					<view class="cu-bar bg-white justify-end">
-						<view class="action">
-							<button class="cu-btn bg-green" @tap="toBegin(modalContent)">确定</button>
-							<button class="cu-btn line-green text-green margin-left" @tap="hideModal">取消</button>
-						</view>
-					</view>
+		<view class="exam-container" :style="[{top:CustomBar + 'px'}]">
+			<view v-if="!isBegin && !isRecord" class="exam-choice">
+				<view class="exam-choice-title">
+					<text>请选择难度</text>
 				</view>
-			</view>
-		</view>
-		<view v-if="isBegin && !isRecord" class="exam-question">
-			<view class="exam-question-title">
-				<view class="cu-progress round xs">
-					<view class="bg-red" :style="[{ width: loading ? progressWidth : ''}]"></view>
+				<view class="choice-button">
+					<button v-for="(item, index) in questionDifficulty" :key="index" class="cu-btn bg-green shadow"
+						@tap="showModal(item,$event)" data-target="modal">{{item.name}}</button>
 				</view>
-				<text class="count-down">
-					<text class="lg text-gray cuIcon-time"></text>
-					<text class="time">{{minutes}}:{{seconds}}</text>
-				</text>
-			</view>
-			<view class="exam-question-main">
-				<examination-detail :questionDetail="getQuestionDetail"
-					@examinationDetailValue="getExaminationDetailValue" :key="examinationDetailKey">
-				</examination-detail>
-			</view>
-			<view class="exam-question-footer">
-				<button class="cu-btn bg-green margin-tb-sm" @tap="toPrve(rownum)"
-					v-show="!isFirst">{{prveBtn}}</button>
-				<button class="cu-btn bg-green margin-tb-sm" @tap="toNext(rownum)">{{nextBtn}}</button>
-			</view>
-			<view class="cu-modal" :class="modalName=='completeModal'?'show':''">
-				<view class="cu-dialog">
-					<view class="cu-bar bg-white flex-direction">
-						<view class="padding-top">本次测试共有<text
-								:class="questionList.length == hasDoneQuestionCount? 'text-green':'text-red'">{{questionList.length}}</text>小题
-						</view>
-						<view>您已完成<text
-								:class="questionList.length == hasDoneQuestionCount? 'text-green':'text-red'">{{hasDoneQuestionCount}}</text>小题
-						</view>
-					</view>
-					<view class="cu-bar bg-white justify-center">
-						<view class="action">
-							<button class="cu-btn bg-green" @tap="submitExam">确认提交</button>
-							<button class="cu-btn line-green text-green margin-left" @tap="hideModal">检查一下</button>
-						</view>
-					</view>
-				</view>
-			</view>
-		</view>
-		<view v-if="isRecord" class="exam-report">
-			<view class="exam-report-title cu-bar solid-bottom">
-				<view class="action">
-					<text class="cuIcon-title text-blue"></text>历史记录
-				</view>
-			</view>
-			<view class="exam-report-login" v-if="!hasLogin">
-				<view class="padding flex flex-direction">
-					<button class="cu-btn bg-green margin-tb-lg lg" @tap="toLogin">欢迎登录</button>
-				</view>
-			</view>
-			<uni-list v-if="hasLogin" ref="list" scroll-y class="exam-report-list listview">
-				<view class="exam-report-list-item cu-bar solid-bottom" v-for="(item, index) in reportList" :key="index"
-					@tap="getRecordDetail(item.reportId)">
-					<text class="shadow bg-cyan">{{item.rowId}}</text>
-					<text class="text-xl radius shadow"
-						:class="getRecordDifficultyClass(item.examDifficulty)">{{getRecordDifficultyText(item.examDifficulty)}}</text>
-					<text :class="item.examScore < 60 ? 'text-red' : 'text-green' ">{{item.examScore}}分</text>
-					<text class="text-gray">{{item.uploadTime}}</text>
-				</view>
-			</uni-list>
-			<view class="cu-modal report-modal" :class="modalName=='reportModal'?'show':''">
-				<view class="cu-dialog">
-					<view class="cu-bar bg-white justify-end">
-						<view class="content">测验结果</view>
-						<view class="action" @tap="hideModal">
-							<text class="cuIcon-close text-red"></text>
-						</view>
-					</view>
-					<view class="cu-bar bg-white justify-around">
-						<view class="report-modal-info">
-							<view>作答人: {{reportItem.from_user}}</view>
-							<view>难度: {{getRecordDifficultyText(reportItem.exam_difficulty)}}</view>
-						</view>
-						<view class="report-modal-info">
-							<view>分数: {{reportItem.exam_score}}</view>
-							<view>{{changeTimestampToTime(reportItem.upload_time)}}</view>
-						</view>
-					</view>
-					<view class="report-modal-question">
-						<uni-list ref="list" scroll-y class="report-modal-question-list listview"
-							:key="examinationDetailKey">
-							<view class="report-modal-question-list-item cu-bar solid-bottom"
-								v-for="(item, index) in reportItem.question_list" :key="index">
-								<view class="list-item-question-content">
-									<text>{{item.rowId}}.{{item.question_content}}</text>
-								</view>
-								<view class="list-item-question-option" v-for="(qo, idx) in item.question_option"
-									:key="idx">
-									<text :class="qo.is_answer ? 'bg-green' : ''">{{qo.choice_code}}</text>
-									<text>{{qo.choice_content}}</text>
-								</view>
-								<view class="list-item-user-answer">
-									<text>您选择的答案：{{item.user_answer}}</text>
-								</view>
+				<view class="cu-modal" :class="modalName=='modal'?'show':''">
+					<view class="cu-dialog">
+						<view class="cu-bar bg-white justify-end">
+							<view class="content">{{modalContent.name}}</view>
+							<view class="action" @tap="hideModal">
+								<text class="cuIcon-close text-red"></text>
 							</view>
-						</uni-list>
+						</view>
+						<view class="padding-xl">{{modalContent.explain}}</view>
+						<view class="cu-bar bg-white justify-end">
+							<view class="action">
+								<button class="cu-btn bg-green" @tap="toBegin(modalContent)">确定</button>
+								<button class="cu-btn line-green text-green margin-left" @tap="hideModal">取消</button>
+							</view>
+						</view>
 					</view>
 				</view>
 			</view>
-		</view>
-		<view class="cu-modal" :class="modalName=='showModal'?'show':''">
-			<view class="cu-dialog">
-				<view class="cu-bar bg-white justify-center">
-					<view class="content">操作超时，请重试</view>
-					<view class="action" @tap="hideModal">
-						<text class="cuIcon-close text-red"></text>
+			<view v-if="isBegin && !isRecord" class="exam-question">
+				<view class="exam-question-title">
+					<view class="cu-progress round xs">
+						<view class="bg-red" :style="[{ width: loading ? progressWidth : ''}]"></view>
+					</view>
+					<text class="count-down">
+						<text class="lg text-gray cuIcon-time"></text>
+						<text class="time">{{minutes}}:{{seconds}}</text>
+					</text>
+				</view>
+				<view class="exam-question-main">
+					<examination-detail :questionDetail="getQuestionDetail"
+						@examinationDetailValue="getExaminationDetailValue" :key="examinationDetailKey">
+					</examination-detail>
+				</view>
+				<view class="exam-question-footer">
+					<button class="cu-btn bg-green margin-tb-sm" @tap="toPrve(rownum)"
+						v-show="!isFirst">{{prveBtn}}</button>
+					<button class="cu-btn bg-green margin-tb-sm" @tap="toNext(rownum)">{{nextBtn}}</button>
+				</view>
+				<view class="cu-modal" :class="modalName=='completeModal'?'show':''">
+					<view class="cu-dialog">
+						<view class="cu-bar bg-white flex-direction">
+							<view class="padding-top">本次测试共有<text
+									:class="questionList.length == hasDoneQuestionCount? 'text-green':'text-red'">{{questionList.length}}</text>小题
+							</view>
+							<view>您已完成<text
+									:class="questionList.length == hasDoneQuestionCount? 'text-green':'text-red'">{{hasDoneQuestionCount}}</text>小题
+							</view>
+						</view>
+						<view class="cu-bar bg-white justify-center">
+							<view class="action">
+								<button class="cu-btn bg-green" @tap="submitExam">确认提交</button>
+								<button class="cu-btn line-green text-green margin-left" @tap="hideModal">检查一下</button>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+			<view v-if="isRecord" class="exam-report">
+				<view class="exam-report-title cu-bar solid-bottom">
+					<view class="action">
+						<text class="cuIcon-title text-blue"></text>历史记录
+					</view>
+				</view>
+				<view class="exam-report-login" v-if="!hasLogin">
+					<view class="padding flex flex-direction">
+						<button class="cu-btn bg-green margin-tb-lg lg" @tap="toLogin">欢迎登录</button>
+					</view>
+				</view>
+				<uni-list v-if="hasLogin" ref="list" scroll-y class="exam-report-list listview">
+					<view class="exam-report-list-item cu-bar solid-bottom" v-for="(item, index) in reportList"
+						:key="index" @tap="getRecordDetail(item.reportId)">
+						<text class="shadow bg-cyan">{{item.rowId}}</text>
+						<text class="text-xl radius shadow"
+							:class="[getRecordDifficultyClass(item.examDifficulty)]">{{getRecordDifficultyText(item.examDifficulty)}}</text>
+						<text :class="item.examScore < 60 ? 'text-red' : 'text-green' ">{{item.examScore}}分</text>
+						<text class="text-gray">{{item.uploadTime}}</text>
+					</view>
+				</uni-list>
+				<view class="cu-modal report-modal" :class="modalName=='reportModal'?'show':''">
+					<view class="cu-dialog">
+						<view class="cu-bar bg-white justify-end">
+							<view class="content">测验结果</view>
+							<view class="action" @tap="hideModal">
+								<text class="cuIcon-close text-red"></text>
+							</view>
+						</view>
+						<view class="cu-bar bg-white justify-around">
+							<view class="report-modal-info">
+								<view>作答人: {{reportItem.from_user}}</view>
+								<view>难度: {{getRecordDifficultyText(reportItem.exam_difficulty)}}</view>
+							</view>
+							<view class="report-modal-info">
+								<view>分数: {{reportItem.exam_score}}</view>
+								<view>{{changeTimestampToTime(reportItem.upload_time)}}</view>
+							</view>
+						</view>
+						<view class="report-modal-question">
+							<uni-list ref="list" scroll-y class="report-modal-question-list listview"
+								:key="examinationDetailKey">
+								<view class="report-modal-question-list-item cu-bar solid-bottom"
+									v-for="(item, index) in reportItem.question_list" :key="index">
+									<view class="list-item-question-content">
+										<text>{{item.rowId}}.{{item.question_content}}</text>
+									</view>
+									<view class="list-item-question-option" v-for="(qo, idx) in item.question_option"
+										:key="idx">
+										<text :class="qo.is_answer ? 'bg-green' : ''">{{qo.choice_code}}</text>
+										<text>{{qo.choice_content}}</text>
+									</view>
+									<view class="list-item-user-answer">
+										<text>您选择的答案：{{item.user_answer}}</text>
+									</view>
+								</view>
+							</uni-list>
+						</view>
+					</view>
+				</view>
+			</view>
+			<view class="cu-modal" :class="modalName=='showModal'?'show':''">
+				<view class="cu-dialog">
+					<view class="cu-bar bg-white justify-center">
+						<view class="content">操作超时，请重试</view>
+						<view class="action" @tap="hideModal">
+							<text class="cuIcon-close text-red"></text>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -593,189 +595,192 @@
 		display: flex;
 		flex-direction: column;
 
-		.exam-choice {
-			width: 100vw;
-			justify-content: space-around;
-			align-items: center;
-
-			.exam-choice-title {
-				margin-top: 30px;
-				padding: 10px 15px;
-				font-size: 18px;
-				text-align: center;
-
-				text {
-					text-shadow: 1px 1px 1px #ccc;
-					font-family: serif;
-					font-weight: bold;
-				}
-			}
-
-			.choice-button {
-				display: flex;
-				flex-direction: column;
+		.exam-container {
+			margin-top: 45px;
+			.exam-choice {
+				width: 100vw;
 				justify-content: space-around;
 				align-items: center;
 
-
-				button {
-					font-size: 20px;
-					height: 40px;
-					width: 100px;
-					margin-top: 60px;
-					margin-bottom: 20px;
-					line-height: 40px;
+				.exam-choice-title {
+					margin-top: 30px;
+					padding: 10px 15px;
+					font-size: 18px;
 					text-align: center;
 
-					&:nth-child(1) {
-						background-color: #8dc63f;
-						box-shadow: 6upx 6upx 8upx rgba(48, 156, 63, 0.2);
-					}
-
-					&:nth-child(2) {
-						background-color: #f37b1d;
-						box-shadow: 6upx 6upx 8upx rgba(217, 109, 26, 0.2);
-					}
-
-					&:nth-child(3) {
-						background-color: #e54d42;
-						box-shadow: 6upx 6upx 8upx rgba(204, 69, 59, 0.2);
-					}
-				}
-
-			}
-		}
-
-		.exam-question {
-			position: relative;
-			width: 100vw;
-			padding: 10px 15px;
-
-			.exam-question-title {
-				position: relative;
-				height: 50px;
-
-				.count-down {
-					position: absolute;
-					right: 0;
-					top: 20px;
-
-					.time {
-						margin-left: 5px;
-					}
-				}
-			}
-
-			.exam-question-main {}
-
-			.exam-question-footer {
-				position: relative;
-				margin-top: 20px;
-				height: auto;
-
-				button {
-					position: absolute;
-
-					&:nth-child(1) {
-						left: 20px;
-					}
-
-					&:nth-child(2) {
-						right: 20px;
-					}
-				}
-			}
-		}
-
-		.exam-report {
-			height: calc(100% - 45px);
-			width: 100vw;
-			padding: 5px;
-
-			.exam-report-title {}
-
-			.exam-report-login {}
-
-			.exam-report-list {
-				height: calc(100vh - 200px);
-				padding: 10px;
-
-				.exam-report-list-item {
-					justify-content: space-around;
-
-					&:active {
-						background-color: #dfdfdf;
-					}
-
 					text {
+						text-shadow: 1px 1px 1px #ccc;
+						font-family: serif;
+						font-weight: bold;
+					}
+				}
+
+				.choice-button {
+					display: flex;
+					flex-direction: column;
+					justify-content: space-around;
+					align-items: center;
+
+
+					button {
+						font-size: 20px;
+						height: 40px;
+						width: 100px;
+						margin-top: 60px;
+						margin-bottom: 20px;
+						line-height: 40px;
+						text-align: center;
+
 						&:nth-child(1) {
-							height: 25px;
-							width: 25px;
-							text-align: center;
-							line-height: 25px;
-							border-radius: 50%;
+							background-color: #8dc63f;
+							box-shadow: 6upx 6upx 8upx rgba(48, 156, 63, 0.2);
 						}
 
 						&:nth-child(2) {
-							padding: 3px 8px;
+							background-color: #f37b1d;
+							box-shadow: 6upx 6upx 8upx rgba(217, 109, 26, 0.2);
 						}
 
 						&:nth-child(3) {
-							height: 25px;
-							width: 50px;
-							padding: 3px 8px;
-							line-height: 25px;
-							text-align: center;
+							background-color: #e54d42;
+							box-shadow: 6upx 6upx 8upx rgba(204, 69, 59, 0.2);
+						}
+					}
+
+				}
+			}
+
+			.exam-question {
+				position: relative;
+				width: 100vw;
+				padding: 10px 15px;
+
+				.exam-question-title {
+					position: relative;
+					height: 50px;
+
+					.count-down {
+						position: absolute;
+						right: 0;
+						top: 20px;
+
+						.time {
+							margin-left: 5px;
+						}
+					}
+				}
+
+				.exam-question-main {}
+
+				.exam-question-footer {
+					position: relative;
+					margin-top: 20px;
+					height: auto;
+
+					button {
+						position: absolute;
+
+						&:nth-child(1) {
+							left: 20px;
+						}
+
+						&:nth-child(2) {
+							right: 20px;
 						}
 					}
 				}
 			}
 
-			.report-modal {
-				.cu-dialog {
-					height: 80vh;
+			.exam-report {
+				height: calc(100% - 45px);
+				width: 100vw;
+				padding: 5px;
 
-					.report-modal-info {
-						view {
-							margin: 10px 15px;
+				.exam-report-title {}
+
+				.exam-report-login {}
+
+				.exam-report-list {
+					height: calc(100vh - 200px);
+					padding: 10px;
+
+					.exam-report-list-item {
+						justify-content: space-around;
+
+						&:active {
+							background-color: #dfdfdf;
+						}
+
+						text {
+							&:nth-child(1) {
+								height: 25px;
+								width: 25px;
+								text-align: center;
+								line-height: 25px;
+								border-radius: 50%;
+							}
+
+							&:nth-child(2) {
+								padding: 3px 8px;
+							}
+
+							&:nth-child(3) {
+								height: 25px;
+								width: 50px;
+								padding: 3px 8px;
+								line-height: 25px;
+								text-align: center;
+							}
 						}
 					}
+				}
 
-					.report-modal-question {
-						padding: 5px;
+				.report-modal {
+					.cu-dialog {
+						height: 80vh;
 
-						.report-modal-question-list {
-							height: calc(80vh - 150px);
+						.report-modal-info {
+							view {
+								margin: 10px 15px;
+							}
+						}
 
-							.report-modal-question-list-item {
-								flex-direction: column;
-								align-items: self-start;
-								margin: 10px 5px;
-								padding: 5px 15px;
-								font-size: 15px;
-								text-align: start;
+						.report-modal-question {
+							padding: 5px;
 
-								.list-item-question-content {}
+							.report-modal-question-list {
+								height: calc(80vh - 150px);
 
-								.list-item-question-option {
-									margin-top: 10px;
+								.report-modal-question-list-item {
+									flex-direction: column;
+									align-items: self-start;
+									margin: 10px 5px;
+									padding: 5px 15px;
+									font-size: 15px;
+									text-align: start;
 
-									text {
-										&:nth-child(1) {
-											display: inline-block;
-											height: 20px;
-											width: 20px;
-											text-align: center;
-											line-height: 20px;
-											border-radius: 50%;
-											margin-right: 10px;
-											border: #39b54a 1px solid;
+									.list-item-question-content {}
+
+									.list-item-question-option {
+										margin-top: 10px;
+
+										text {
+											&:nth-child(1) {
+												display: inline-block;
+												height: 20px;
+												width: 20px;
+												text-align: center;
+												line-height: 20px;
+												border-radius: 50%;
+												margin-right: 10px;
+												border: #39b54a 1px solid;
+											}
 										}
 									}
-								}
 
-								.list-item-user-answer {
-									margin-top: 10px;
+									.list-item-user-answer {
+										margin-top: 10px;
+									}
 								}
 							}
 						}

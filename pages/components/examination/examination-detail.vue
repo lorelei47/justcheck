@@ -10,7 +10,7 @@
 			<view class="question-answer-option" v-if="isChoice">
 				<view class="question-answer-option-item onActive" @click="toAnswer(item,index)"
 					v-for="(item, index) in questionDetail.questionOption" :key="item.choice_code">
-					<text :class="questionAnswerOptionClass(index)">{{item.choice_code}}</text>
+					<text :class="[questionAnswerOptionClass(index)]">{{item.choice_code}}</text>
 					<text class="question-answer-option-content">{{item.choice_content}}</text>
 				</view>
 			</view>

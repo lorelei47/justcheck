@@ -1,15 +1,12 @@
 <template>
-	<view @touchstart="start" @touchend="end">
-		<cu-custom bgColor="topTitle">
-			<block slot="content">首页</block>
-		</cu-custom>
-		<view class="cu-bar bg-white search fixed" :style="[{top:CustomBar + 'px'}]">
+	<view>
+		<view class="cu-bar bg-white search fixed">
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
 				<input type="text" v-model="searchWord" placeholder="输入搜索的关键词" confirm-type="search"></input>
 			</view>
 		</view>
-		<view class="page-news" :style="[{top: CustomBar + 'px'}]">
+		<view class="page-news">
 			<!-- #ifdef MP-QQ -->
 			<scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
 				<view v-for="(item, index) in dataList" :key="item.id">
@@ -262,26 +259,6 @@
 				}
 				return (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4())
 					.toUpperCase();
-			},
-			start(e) {
-				this.startData.clientX = e.changedTouches[0].clientX;
-				this.startData.clientY = e.changedTouches[0].clientY;
-			},
-			end(e) {
-				const subX = e.changedTouches[0].clientX - this.startData.clientX;
-				const subY = e.changedTouches[0].clientY - this.startData.clientY;
-				if (subY > 50 || subY < -50) {
-					console.log('上下滑')
-				} else {
-					if (subX > 100) {
-						console.log('左滑')
-					} else if (subX < -100) {
-						console.log('右滑')
-						// uni.navigateTo({
-						// 	url: 'pages/tabbar/examination/examination',
-						// });
-					}
-				}
 			}
 		}
 	}
@@ -299,6 +276,7 @@
 	}
 
 	.page-news {
+		margin-top: 50px;
 		flex: 1;
 		flex-direction: column;
 		position: absolute;

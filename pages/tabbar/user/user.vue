@@ -1,48 +1,43 @@
 <template>
-	<view>
-		<cu-custom bgColor="topTitle">
-			<!-- <block slot="content">个人中心</block> -->
-		</cu-custom>
-		<view class="center">
-			<view class="logo" @click="bindLogin" :hover-class="!hasLogin ? 'logo-hover' : ''">
-				<image class="logo-img" :src="avatarUrl"></image>
-				<view class="logo-title">
-					<text class="uer-name">{{hasLogin ? userName : '您未登录'}}</text>
-					<text class="go-login navigat-arrow" v-if="!hasLogin">&#xe65e;</text>
-				</view>
+	<view class="center">
+		<view class="logo" @click="bindLogin" :hover-class="!hasLogin ? 'logo-hover' : ''">
+			<image class="logo-img" :src="avatarUrl"></image>
+			<view class="logo-title">
+				<text class="uer-name">{{hasLogin ? userName : '您未登录'}}</text>
+				<text class="go-login navigat-arrow" v-if="!hasLogin">&#xe65e;</text>
 			</view>
-			<view class="center-list">
-				<view class="center-list-item" v-show="hasLogin && hasPwd" @click="resPwd">
-					<text class="list-icon">&#xe60f;</text>
-					<text class="list-text">修改密码</text>
-					<text class="navigat-arrow">&#xe65e;</text>
-				</view>
+		</view>
+		<view class="center-list">
+			<view class="center-list-item" v-show="hasLogin && hasPwd" @click="resPwd">
+				<text class="list-icon">&#xe60f;</text>
+				<text class="list-text">修改密码</text>
+				<text class="navigat-arrow">&#xe65e;</text>
 			</view>
-			<view class="center-list">
-				<!-- 暂时不做
+		</view>
+		<view class="center-list">
+			<!-- 暂时不做
 					<view class="center-list-item border-bottom" v-if="hasLogin" @click="addQuestion">
 					<text class="list-icon">&#xe65f;</text>
 					<text class="list-text">新增题目</text>
 					<text class="navigat-arrow">&#xe65e;</text>
 				</view> -->
-				<view class="center-list-item" @click="feedback">
-					<text class="list-icon">&#xe60b;</text>
-					<text class="list-text">帮助与反馈</text>
-					<text class="navigat-arrow">&#xe65e;</text>
-				</view>
+			<view class="center-list-item" @click="feedback">
+				<text class="list-icon">&#xe60b;</text>
+				<text class="list-text">帮助与反馈</text>
+				<text class="navigat-arrow">&#xe65e;</text>
 			</view>
-			<view class="center-list">
-				<view class="center-list-item" @click="aboutApp">
-					<text class="list-icon">&#xe614;</text>
-					<text class="list-text">关于应用</text>
-					<text class="navigat-arrow">&#xe65e;</text>
-				</view>
+		</view>
+		<view class="center-list">
+			<view class="center-list-item" @click="aboutApp">
+				<text class="list-icon">&#xe614;</text>
+				<text class="list-text">关于应用</text>
+				<text class="navigat-arrow">&#xe65e;</text>
 			</view>
-			<view class="center-list" v-if="hasLogin" :loading="logoutBtnLoading" @tap="bindLogout">
-				<view class="center-list-item">
-					<text class="list-icon">&#xe65e;</text>
-					<text class="list-text">退出登录</text>
-				</view>
+		</view>
+		<view class="center-list" v-if="hasLogin" :loading="logoutBtnLoading" @tap="bindLogout">
+			<view class="center-list-item">
+				<text class="list-icon">&#xe65e;</text>
+				<text class="list-text">退出登录</text>
 			</view>
 		</view>
 	</view>
@@ -67,18 +62,18 @@
 		},
 		computed: {
 			...mapState('userStatus', {
-				hasLogin: state=>state.hasLogin,
-				forcedLogin: state=>state.forcedLogin,
-				userName: state=>state.userName
+				hasLogin: state => state.hasLogin,
+				forcedLogin: state => state.forcedLogin,
+				userName: state => state.userName
 			})
 		},
 		methods: {
-			...mapMutations('userStatus',['logout']),
+			...mapMutations('userStatus', ['logout']),
 			bindLogin() {
 				if (!this.hasLogin) {
 					univerifyLogin().catch(err => {
 						if (err === false) return;
-						
+
 						uni.navigateTo({
 							url: '/pages/user/login/login',
 						});
@@ -103,9 +98,9 @@
 						action: 'logout'
 					},
 					success: (e) => {
-		
+
 						console.log('logout success', e);
-		
+
 						if (e.result.code == 0) {
 							this.logout();
 							uni.removeStorageSync('uni_id_token')
@@ -127,7 +122,7 @@
 							})
 							console.log('登出失败', e);
 						}
-		
+
 					},
 					fail: (e) => {
 						uni.showModal({

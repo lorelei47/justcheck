@@ -13,7 +13,7 @@
 				<view class="question-answer-option-item" :class="toCtrlClass" @click="toAnswer(item,index)"
 					v-for="(item, index) in questionData.questionOption" :key="item.choice_code">
 					<text
-						:class="questionAnswerOptionClass(index)">{{questionOptionStatus(item.choice_code,index)}}</text>
+						:class="[questionAnswerOptionClass(index)]">{{questionOptionStatus(item.choice_code,index)}}</text>
 					<text class="question-answer-option-content">{{item.choice_content}}</text>
 				</view>
 			</view>
