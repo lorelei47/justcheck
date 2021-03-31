@@ -19,7 +19,15 @@ exports.main = async (event, context) => {
 	switch (event.action) {
 		case 'question-list':
 			const questionListCollection = db.collection('question-list');
-			let questionList = await questionListCollection.orderBy('upload_date', 'desc').get();
+			let questionList = await questionListCollection.where(
+				dbCmd.or([{
+						question_content: new RegExp(params.searchWord, 'i')
+					},
+					{
+						question_tag: new RegExp(params.searchWord, 'i')
+					}
+				])
+			).orderBy('upload_date', 'desc').get();
 			res = {
 				code: 0,
 				...questionList

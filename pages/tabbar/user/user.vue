@@ -19,11 +19,12 @@
 				</view>
 			</view>
 			<view class="center-list">
-				<view class="center-list-item border-bottom" v-if="hasLogin" @click="addQuestion">
+				<!-- 暂时不做
+					<view class="center-list-item border-bottom" v-if="hasLogin" @click="addQuestion">
 					<text class="list-icon">&#xe65f;</text>
 					<text class="list-text">新增题目</text>
 					<text class="navigat-arrow">&#xe65e;</text>
-				</view>
+				</view> -->
 				<view class="center-list-item" @click="feedback">
 					<text class="list-icon">&#xe60b;</text>
 					<text class="list-text">帮助与反馈</text>
@@ -142,6 +143,21 @@
 			resPwd() {
 				uni.navigateTo({
 					url: '/pages/user/pwd/update-password'
+				})
+			},
+			addQuestion() {
+				// uni.navigateTo({
+				// 	url: '/pages/tabbar/user/addQuestion'
+				// })
+			},
+			feedback() {
+				uni.navigateTo({
+					url: '/pages/tabbar/user/feedback'
+				})
+			},
+			aboutApp() {
+				uni.navigateTo({
+					url: '/pages/tabbar/user/aboutApp'
 				})
 			}
 		}

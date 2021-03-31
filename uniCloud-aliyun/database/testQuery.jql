@@ -11,14 +11,18 @@
 // 	size: 15
 // }).end();
 
-db.collection('question-list').aggregate().sample({
-	size: 15
-}).project({
-	_id: 1,
-	question_type: 1,
-	question_content: 1,
-	question_option: 1,
-	question_answer: 1,
-	question_explain: 1,
-	question_difficulty: 1
-}).end();
+// db.collection('question-list').aggregate().sample({
+// 	size: 15
+// }).project({
+// 	_id: 1,
+// 	question_type: 1,
+// 	question_content: 1,
+// 	question_option: 1,
+// 	question_answer: 1,
+// 	question_explain: 1,
+// 	question_difficulty: 1
+// }).end();
+var a = ''
+db.collection('question-list').where({
+	question_tag: new RegExp(a,'i')
+}).orderBy('upload_date', 'desc').get();

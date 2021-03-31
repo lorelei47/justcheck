@@ -6,10 +6,7 @@
 		<view class="cu-bar bg-white search fixed" :style="[{top:CustomBar + 'px'}]">
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
-				<input type="text" placeholder="输入搜索的关键词" confirm-type="search"></input>
-			</view>
-			<view class="action">
-				<button class="cu-btn bg-gradual-green shadow-blur round">搜索</button>
+				<input type="text" v-model="searchWord" placeholder="输入搜索的关键词" confirm-type="search"></input>
 			</view>
 		</view>
 		<view class="page-news" :style="[{top: CustomBar + 'px'}]">
@@ -83,6 +80,7 @@
 			return {
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
+				searchWord: '',
 				dataList: [],
 				navigateFlag: false,
 				pulling: false,
@@ -126,6 +124,11 @@
 			// #endif
 			this.loadData();
 		},
+		watch: {
+			searchWord: function(){
+				this.loadData(true);
+			}
+		},
 		methods: {
 			loadData(refresh) {
 				if (this.isLoading) {
@@ -140,7 +143,9 @@
 					name: 'question-handler',
 					data: {
 						action: 'question-list',
-						// param: {100}
+						param: {
+							searchWord: _self.searchWord
+						}
 					},
 					success: (res) => {
 						const data = res.result.data;

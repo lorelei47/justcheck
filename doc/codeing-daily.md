@@ -120,3 +120,6 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 
 > day17 (20210330)
 - 增加随机一题功能
+
+> day18 (20210331)
+- 增加搜索查询
