@@ -9,8 +9,8 @@
 		<view class="page-news">
 			<!-- #ifdef MP-QQ -->
 			<scroll-view class="listview" style="flex: 1;" enableBackToTop="true" scroll-y @scrolltolower="loadMore()">
-				<view v-for="(item, index) in dataList" :key="item.id">
-					<question-item :questionItem="item" @close="closeItem(index)" @click="goDetail(item)">
+				<view v-for="(item, index) in dataList" :key="item.id" @click="goDetail(item)">
+					<question-item :questionItem="item" @close="closeItem(index)">
 					</question-item>
 				</view>
 				<view class="loading-more" v-if="isLoading || dataList.length > 4">
@@ -32,7 +32,7 @@
 						<text class="loading-text">{{refreshText}}</text>
 					</div>
 				</uni-refresh>
-				<uni-cell v-for="(item, index) in dataList" :key="item.id">
+				<uni-cell v-for="(item, index) in dataList" :key="item.id" >
 					<question-item :questionItem="item" @close="closeItem(index)" @click="goDetail(item)">
 					</question-item>
 				</uni-cell>
