@@ -86,16 +86,19 @@
 						<button class="cu-btn bg-green margin-tb-lg lg" @tap="toLogin">欢迎登录</button>
 					</view>
 				</view>
-				<uni-list v-if="hasLogin" ref="list" scroll-y class="exam-report-list listview">
-					<view class="exam-report-list-item cu-bar solid-bottom" v-for="(item, index) in reportList"
-						:key="index" @tap="getRecordDetail(item.reportId)">
-						<text class="shadow bg-cyan">{{item.rowId}}</text>
-						<text class="text-xl radius shadow"
-							:class="[getRecordDifficultyClass(item.examDifficulty)]">{{getRecordDifficultyText(item.examDifficulty)}}</text>
-						<text :class="item.examScore < 60 ? 'text-red' : 'text-green' ">{{item.examScore}}分</text>
-						<text class="text-gray">{{item.uploadTime}}</text>
-					</view>
-				</uni-list>
+				<view class="page-news">
+					<uni-list v-if="hasLogin" ref="list" scroll-y class="exam-report-list listview">
+						<view class="exam-report-list-item cu-bar solid-bottom" v-for="(item, index) in reportList"
+							:key="index" @tap="getRecordDetail(item.reportId)">
+							<text class="shadow bg-cyan">{{item.rowId}}</text>
+							<text class="text-xl radius shadow" :class="{'bg-olive': item.examDifficulty==='easy'
+							, 'bg-orange' : item.examDifficulty==='normal' , 'bg-red' :
+							item.examDifficulty==='difficult' }">{{getRecordDifficultyText(item.examDifficulty)}}</text>
+							<text :class="item.examScore < 60 ? 'text-red' : 'text-green' ">{{item.examScore}}分</text>
+							<text class="text-gray">{{item.uploadTime}}</text>
+						</view>
+					</uni-list>
+				</view>
 				<view class="cu-modal report-modal" :class="modalName=='reportModal'?'show':''">
 					<view class="cu-dialog">
 						<view class="cu-bar bg-white justify-end">
@@ -115,7 +118,7 @@
 							</view>
 						</view>
 						<view class="report-modal-question">
-							<uni-list ref="list" scroll-y class="report-modal-question-list listview"
+							<uni-list ref="list" :scroll-y="true" class="report-modal-question-list listview"
 								:key="examinationDetailKey">
 								<view class="report-modal-question-list-item cu-bar solid-bottom"
 									v-for="(item, index) in reportItem.question_list" :key="index">
@@ -597,6 +600,7 @@
 
 		.exam-container {
 			margin-top: 45px;
+
 			.exam-choice {
 				width: 100vw;
 				justify-content: space-around;
@@ -700,40 +704,51 @@
 
 				.exam-report-login {}
 
-				.exam-report-list {
-					height: calc(100vh - 200px);
-					padding: 10px;
+				.page-news {
+					display: flex;
+					flex: 1;
+					flex-direction: column;
+					left: 0;
+					top: 0;
+					right: 0;
+					bottom: 0;
 
-					.exam-report-list-item {
-						justify-content: space-around;
+					.exam-report-list {
+						height: calc(100vh - 200px);
+						padding: 10px;
 
-						&:active {
-							background-color: #dfdfdf;
-						}
+						.exam-report-list-item {
+							justify-content: space-around;
 
-						text {
-							&:nth-child(1) {
-								height: 25px;
-								width: 25px;
-								text-align: center;
-								line-height: 25px;
-								border-radius: 50%;
+							&:active {
+								background-color: #dfdfdf;
 							}
 
-							&:nth-child(2) {
-								padding: 3px 8px;
-							}
+							text {
+								&:nth-child(1) {
+									height: 25px;
+									width: 25px;
+									text-align: center;
+									line-height: 25px;
+									border-radius: 50%;
+								}
 
-							&:nth-child(3) {
-								height: 25px;
-								width: 50px;
-								padding: 3px 8px;
-								line-height: 25px;
-								text-align: center;
+								&:nth-child(2) {
+									padding: 3px 8px;
+								}
+
+								&:nth-child(3) {
+									height: 25px;
+									width: 50px;
+									padding: 3px 8px;
+									line-height: 25px;
+									text-align: center;
+								}
 							}
 						}
 					}
 				}
+
 
 				.report-modal {
 					.cu-dialog {

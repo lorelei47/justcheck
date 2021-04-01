@@ -32,7 +32,7 @@
 						<text class="loading-text">{{refreshText}}</text>
 					</div>
 				</uni-refresh>
-				<uni-cell v-for="(item, index) in dataList" :key="item.id" >
+				<uni-cell v-for="(item, index) in dataList" :key="index" >
 					<question-item :questionItem="item" @close="closeItem(index)" @click="goDetail(item)">
 					</question-item>
 				</uni-cell>

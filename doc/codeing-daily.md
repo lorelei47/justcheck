@@ -123,3 +123,6 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 
 > day18 (20210331)
 - 增加搜索查询
+
+> day19 (20210401)
+- 修复部分代码在微信小程序上不兼容问题
