@@ -9,10 +9,38 @@
 			<p>本应用注册的用户是保存用户的测验记录，游客模式也可以使用测验功能，但不记录生成报告，如果需要记录，欢迎注册登录</p>
 		</view>
 		<view class="about-footer">
-			<text>github: <a href="https://github.com/lorelei47/justcheck">https://github.com/lorelei47/justcheck</a></text>
+			<!-- #ifdef MP-WEIXIN -->
+			<view @tap="copy">
+				<text>github: <text class="toGithub">{{url}}</text>
+				</text>
+			</view>
+			<!-- #endif -->
+			<!-- #ifndef MP-WEIXIN -->
+			<text>github: <a href="https://github.com/lorelei47/justcheck">https://github.com/lorelei47/justcheck</a>
+			</text>
+			<!-- #endif -->
 		</view>
 	</view>
 </template>
+<script>
+	export default {
+		data() {
+			return {
+				url: 'https://github.com/lorelei47/justcheck'
+			}
+		},
+		methods: {
+			copy() {
+				uni.setClipboardData({
+					data: this.url,
+					success: function() {
+						console.log('success');
+					}
+				})
+			}
+		}
+	}
+</script>
 
 <style lang="scss" scoped>
 	.center {
@@ -22,16 +50,14 @@
 		.about-title {
 			font-size: 25px;
 			font-weight: bold;
-			margin-bottom: 10px;
-			padding-bottom: 5px;
+			padding-bottom: 10px;
 			border-bottom: #AAAAAA 1px solid;
 		}
 
 		.about-content {
-			padding: 5px;
+			padding: 10px 5px;
 			border-bottom: #AAAAAA 1px solid;
 			border-radius: 5px;
-			margin-bottom: 10px;
 
 			p {
 				margin-top: 10px;
@@ -40,7 +66,13 @@
 		}
 
 		.about-footer {
+			margin-top: 10px;
 			padding: 5px;
+
+			.toGithub {
+				color: #0000ff;
+				text-decoration: underline;
+			}
 		}
 	}
 </style>

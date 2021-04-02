@@ -4,19 +4,22 @@
 		{
 			"path": "pages/tabbar/home/home",
 			"style": {
-				"navigationStyle": "custom"
+				// "navigationBarTitleText": "首页",
+				"navigationStyle": "default"
 			}
 		},
 		{
 			"path": "pages/tabbar/examination/examination",
 			"style": {
-				"navigationStyle": "custom"
+				// "navigationBarTitleText": "测验",
+				"navigationStyle": "default"
 			}
 		},
 		{
 			"path": "pages/tabbar/user/user",
 			"style": {
-				"navigationStyle": "custom"
+				// "navigationBarTitleText": "个人中心",
+				"navigationStyle": "default"
 			}
 		},
 		{

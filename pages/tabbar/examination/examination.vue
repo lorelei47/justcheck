@@ -3,7 +3,7 @@
 		<!-- 		<cu-custom bgColor="topTitle">
 			<block slot="content">测验</block>
 		</cu-custom> -->
-		<scroll-view scroll-x class="bg-white nav text-center fixed">
+		<scroll-view scroll-x class="tab-scroll bg-white nav text-center fixed">
 			<view class="cu-item" :class="item.tabCode==TabCur?'text-blue cur':''" v-for="(item,index) in tab"
 				:key="index" @tap="tabSelect" :data-cur="item.tabCode">
 				{{item.tabCur}}
@@ -603,13 +603,19 @@
 	.center {
 		display: flex;
 		flex-direction: column;
+		
+		.tab-scroll {
+			/* #ifndef MP-WEIXIN */
+			top: 45px;
+			/* #endif */
+		}
 
 		.exam-container {
 			/* #ifdef MP-WEIXIN */
 			height: calc(100vh - 60px);
 			/* #endif */
 			/* #ifndef MP-WEIXIN */
-			height: calc(100vh - 100px);
+			height: calc(100vh - 150px);
 			/* #endif */
 			margin-top: 45px;
 

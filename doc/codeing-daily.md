@@ -130,3 +130,4 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 > day20 (20210402)
 - 组件刷新渲染可以使用this.$nextTick()
 - watch的深度监听编译成微信小程序时不可用（踩坑）
+- 测试微信端样式兼容

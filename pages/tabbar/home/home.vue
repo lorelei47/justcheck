@@ -32,7 +32,7 @@
 						<text class="loading-text">{{refreshText}}</text>
 					</div>
 				</uni-refresh>
-				<uni-cell v-for="(item, index) in dataList" :key="index" >
+				<uni-cell v-for="(item, index) in dataList" :key="index">
 					<question-item :questionItem="item" @close="closeItem(index)" @click="goDetail(item)">
 					</question-item>
 				</uni-cell>
@@ -122,7 +122,7 @@
 			this.loadData();
 		},
 		watch: {
-			searchWord: function(){
+			searchWord: function() {
 				this.loadData(true);
 			}
 		},
@@ -265,6 +265,12 @@
 </script>
 
 <style lang="scss" scoped>
+	.search {
+		/* #ifndef MP-WEIXIN */
+		margin-top: 45px;
+		/* #endif */
+	}
+
 	.no-data {
 		flex: 1;
 		position: absolute;
