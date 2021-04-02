@@ -2423,7 +2423,7 @@ button.cuIcon.lg {
 	backface-visibility: hidden;
 	perspective: 2000upx;
 	background: rgba(0, 0, 0, 0.6);
-	transition: all 0.3s ease-in-out 0s;
+	/* transition: all 0.3s ease-in-out 0s; */
 	pointer-events: none;
 }
 

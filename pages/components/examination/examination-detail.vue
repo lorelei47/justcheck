@@ -9,7 +9,7 @@
 		<view class="question-answer">
 			<view class="question-answer-option" v-if="isChoice">
 				<view class="question-answer-option-item onActive" @click="toAnswer(item,index)"
-					v-for="(item, index) in questionDetail.questionOption" :key="item.choice_code">
+					v-for="(item, index) in questionDetail.questionOption" :key="index">
 					<text :class="{'question-answer-option-code': clickOptionAnswer != index,
 						'question-answer-option-answer': clickOptionAnswer == index}">{{item.choice_code}}</text>
 					<text class="question-answer-option-content">{{item.choice_content}}</text>

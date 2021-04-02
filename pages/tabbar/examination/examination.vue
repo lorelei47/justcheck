@@ -47,8 +47,8 @@
 					</text>
 				</view>
 				<view class="exam-question-main">
-					<examination-detail :questionDetail="getQuestionDetail"
-						@examinationDetailValue="getExaminationDetailValue" :key="examinationDetailKey">
+					<examination-detail v-if="hackReset" :questionDetail="getQuestionDetail"
+						@examinationDetailValue="getExaminationDetailValue">
 					</examination-detail>
 				</view>
 				<view class="exam-question-footer">
@@ -118,8 +118,7 @@
 							</view>
 						</view>
 						<view class="report-modal-question">
-							<uni-list ref="list" :scroll-y="true" class="report-modal-question-list listview"
-								:key="examinationDetailKey">
+							<uni-list v-if="hackReset" ref="list" :scroll-y="true" class="report-modal-question-list listview">
 								<view class="report-modal-question-list-item cu-bar solid-bottom"
 									v-for="(item, index) in reportItem.question_list" :key="index">
 									<view class="list-item-question-content">
@@ -177,7 +176,6 @@
 				tab: [], //tab列表
 				TabCur: 'exam', //tab选中样式
 				progressWidth: '', //答题完成情况进度条
-				examinationDetailKey: 1, //组件刷新key
 				isBegin: false, //是否开始答题
 				isRecord: false, //是否是查询记录
 				isComplete: false, //是否完成
@@ -197,7 +195,8 @@
 				nextBtn: '下一题',
 				rownum: 0, //题目游标
 				reportList: [], //报告列表
-				reportItem: {} //测验报告明细
+				reportItem: {} ,//测验报告明细
+				hackReset: false //组件刷新标志
 			};
 		},
 		created() {
@@ -229,22 +228,17 @@
 			});
 		},
 		watch: {
-			questionList: {
-				handler(value) {
-					let len = value.filter((i) => i.userAnswer !== null).length;
-					if (len > this.hasDoneQuestionCount) {
-						this.hasDoneQuestionCount++;
-						this.progressWidth = Math.round(this.hasDoneQuestionCount / this.questionList.length * 10000, 2) /
-							100 + '%';
-					}
-				},
-				deep: true
-			},
 			getQuestionDetail() {
-				this.examinationDetailKey++;
+				this.hackReset = false;
+				this.$nextTick(() => {
+					this.hackReset = true;
+				});
 			},
 			reportItem() {
-				this.examinationDetailKey++;
+				this.hackReset = false;
+				this.$nextTick(() => {
+					this.hackReset = true;
+				});
 			},
 			hasLogin() {
 				this.getRecordList().catch((res) => {
@@ -291,6 +285,12 @@
 			}
 		},
 		methods: {
+			resComponent(){
+				this.hackReset = false;
+				this.$nextTick(() => {
+					this.hackReset = true;
+				});
+			},
 			tabSelect(e) {
 				this.TabCur = e.currentTarget.dataset.cur;
 				if (this.TabCur == 'record') {
@@ -385,6 +385,12 @@
 			},
 			getExaminationDetailValue(data) {
 				this.questionList[this.rownum] = data;
+				let len = this.questionList.filter((i) => i.userAnswer !== null).length;
+				if (len > this.hasDoneQuestionCount) {
+					this.hasDoneQuestionCount++;
+					this.progressWidth = Math.round(this.hasDoneQuestionCount / this.questionList.length * 10000, 2) /
+						100 + '%';
+				}
 			},
 			toPrve(e) {
 				this.rownum = e - 1;
