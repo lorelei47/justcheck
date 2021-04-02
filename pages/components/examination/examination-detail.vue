@@ -10,7 +10,8 @@
 			<view class="question-answer-option" v-if="isChoice">
 				<view class="question-answer-option-item onActive" @click="toAnswer(item,index)"
 					v-for="(item, index) in questionDetail.questionOption" :key="item.choice_code">
-					<text :class="[questionAnswerOptionClass(index)]">{{item.choice_code}}</text>
+					<text :class="{'question-answer-option-code': clickOptionAnswer != index,
+						'question-answer-option-answer': clickOptionAnswer == index}">{{item.choice_code}}</text>
 					<text class="question-answer-option-content">{{item.choice_content}}</text>
 				</view>
 			</view>
@@ -36,17 +37,6 @@
 				clickOptionAnswer: this.questionDetail.userAnswer != null ? this.questionDetail.userAnswer : -1,
 				questionTypeList: ['选择题', '简答题'],
 			}
-		},
-		computed: {
-			// 选中时样式变更
-			questionAnswerOptionClass: function() {
-				return function(index) {
-					return {
-						'question-answer-option-code': this.clickOptionAnswer != index,
-						'question-answer-option-answer': this.clickOptionAnswer == index,
-					}
-				}
-			},
 		},
 		methods: {
 			getQuestionType(e) {

@@ -122,6 +122,9 @@
 
 <style scoped>
 	.uni-list {
+		/* #ifdef MP-WEIXIN */
+		height: 100%;
+		/* #endif */
 		flex: 1;
 		/* #ifndef APP-NVUE */
 		display: flex;

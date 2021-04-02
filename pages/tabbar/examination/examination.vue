@@ -599,6 +599,12 @@
 		flex-direction: column;
 
 		.exam-container {
+			/* #ifdef MP-WEIXIN */
+			height: calc(100vh - 60px);
+			/* #endif */
+			/* #ifndef MP-WEIXIN */
+			height: calc(100vh - 100px);
+			/* #endif */
 			margin-top: 45px;
 
 			.exam-choice {
@@ -696,7 +702,7 @@
 			}
 
 			.exam-report {
-				height: calc(100% - 45px);
+				height: 100%;
 				width: 100vw;
 				padding: 5px;
 
@@ -706,6 +712,7 @@
 
 				.page-news {
 					display: flex;
+					height: calc(100% - 50px);
 					flex: 1;
 					flex-direction: column;
 					left: 0;
@@ -714,7 +721,7 @@
 					bottom: 0;
 
 					.exam-report-list {
-						height: calc(100vh - 200px);
+						height: 100%;
 						padding: 10px;
 
 						.exam-report-list-item {
@@ -761,6 +768,9 @@
 						}
 
 						.report-modal-question {
+							/* #ifdef MP-WEIXIN */
+							height: calc(100% - 120px);
+							/* #endif */
 							padding: 5px;
 
 							.report-modal-question-list {
