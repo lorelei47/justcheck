@@ -140,7 +140,7 @@
 			</view>
 			<view class="cu-modal" :class="modalName=='showModal'?'show':''">
 				<view class="cu-dialog">
-					<view class="cu-bar bg-white justify-center">
+					<view class="cu-bar bg-white justify-end">
 						<view class="content">操作超时，请重试</view>
 						<view class="action" @tap="hideModal">
 							<text class="cuIcon-close text-red"></text>
@@ -249,7 +249,6 @@
 		computed: {
 			...mapState('userStatus', {
 				hasLogin: state => state.hasLogin,
-				forcedLogin: state => state.forcedLogin,
 				userName: state => state.userName
 			}),
 			changeTimestampToTime: function() {

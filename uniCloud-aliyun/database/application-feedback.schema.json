@@ -1,0 +1,24 @@
+// 文档教程: https://uniapp.dcloud.net.cn/uniCloud/schema
+{
+	"bsonType": "object",
+	"required": [],
+	"permission": {},
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"feedback_date": {
+			"bsonType": "timestamp",
+			"description": "反馈时间"
+		},
+		"feedback_user": {
+			"bsonType": "string",
+			"title": "反馈用户",
+			"trim": "both"
+		},
+		"feedback_content": {
+			"bsonType": "string",
+			"title": "反馈内容"
+		}
+	}
+}

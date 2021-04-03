@@ -8,7 +8,7 @@
 			</view>
 		</view>
 		<view class="center-list">
-			<view class="center-list-item" v-show="hasLogin && hasPwd" @click="resPwd">
+			<view class="center-list-item" v-if="hasLogin && hasPwd" @click="resPwd">
 				<text class="list-icon">&#xe60f;</text>
 				<text class="list-text">修改密码</text>
 				<text class="navigat-arrow">&#xe65e;</text>
@@ -23,7 +23,7 @@
 				</view> -->
 			<view class="center-list-item" @click="feedback">
 				<text class="list-icon">&#xe60b;</text>
-				<text class="list-text">帮助与反馈</text>
+				<text class="list-text">意见反馈</text>
 				<text class="navigat-arrow">&#xe65e;</text>
 			</view>
 		</view>
