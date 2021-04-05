@@ -33,7 +33,7 @@
 					</div>
 				</uni-refresh>
 				<uni-cell v-for="(item, index) in dataList" :key="index">
-					<question-item :questionItem="item" @close="closeItem(index)" @click="goDetail(item)">
+					<question-item :questionItem="item" @tagText="getTagText" @click="goDetail(item)">
 					</question-item>
 				</uni-cell>
 				<uni-cell v-if="isLoading || dataList.length > 4">
@@ -259,6 +259,9 @@
 				}
 				return (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4())
 					.toUpperCase();
+			},
+			getTagText(data){
+				this.searchWord = data;
 			}
 		}
 	}

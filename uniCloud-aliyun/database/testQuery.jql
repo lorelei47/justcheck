@@ -22,7 +22,17 @@
 // 	question_explain: 1,
 // 	question_difficulty: 1
 // }).end();
-var a = ''
-db.collection('question-list').where({
-	question_tag: new RegExp(a,'i')
-}).orderBy('upload_date', 'desc').get();
+db.collection('question-list').aggregate().match({
+	question_type: 0,
+	question_difficulty: 1
+}).sample({
+	size: 10
+}).project({
+	_id: 1,
+	question_type: 1,
+	question_content: 1,
+	question_option: 1,
+	question_answer: 1,
+	question_explain: 1,
+	question_difficulty: 1
+}).end();
