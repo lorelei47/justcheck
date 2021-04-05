@@ -134,3 +134,6 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 
 > day21 (20210403)
 - 增加意见反馈
+
+> day22 (20210405)
+- 允许提交反馈有误的题目

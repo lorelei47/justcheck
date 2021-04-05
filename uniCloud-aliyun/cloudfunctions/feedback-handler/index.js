@@ -12,11 +12,11 @@ exports.main = async (event, context) => {
 	let params = event.param || {};
 	//event为客户端上传的参数
 	console.log('event : ', event);
-	console.log('params : ', params);
 
 	let res = {};
 
 	switch (event.action) {
+		//意见反馈提交
 		case 'submit-feedback-content':
 			const submitFeedbackContentCollection = db.collection('application-feedback');
 			let count = await submitFeedbackContentCollection.add({
@@ -27,6 +27,21 @@ exports.main = async (event, context) => {
 			res = {
 				code: 0,
 				updateNum: count
+			}
+			break;
+			//题目报错提交
+		case 'submit-question-wrong':
+			const submitQuestionWrongCollection = db.collection('question-wrong-notes');
+			let submitQuestionWrongCount = await submitQuestionWrongCollection.add({
+				submit_user: params.submitUser,
+				question_id: params.questionId,
+				wrong_reason: params.wrongReason,
+				submit_date: params.submitDate,
+				is_finish: 0
+			});
+			res = {
+				code: 0,
+				updateNum: submitQuestionWrongCount
 			}
 			break;
 		default:

@@ -12,7 +12,6 @@ exports.main = async (event, context) => {
 	let params = event.param || {};
 	//event为客户端上传的参数
 	console.log('event : ', event);
-	console.log('params : ', params);
 
 	let res = {};
 

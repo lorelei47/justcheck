@@ -1,0 +1,41 @@
+// 文档教程: https://uniapp.dcloud.net.cn/uniCloud/schema
+{
+	"bsonType": "object",
+	"required": [],
+	"permission": {},
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"submit_user": {
+			"bsonType": "string",
+			"description": "反馈的用户"
+		},
+		"question_id": {
+			"bsonType": "string",
+			"description": "关联question-list表的_id",
+			"foreignKey": "question-list._id"
+		},
+		"wrong_reason": {
+			"bsonType": "string",
+			"description": "错误原因"
+		},
+		"submit_date": {
+			"bsonType": "timestamp",
+			"description": "提交时间"
+		},
+		"is_finish": {
+			"bsonType": "int",
+			"title": "是否已处理",
+			"description": "是否已处理：0 否 1 是",
+			"forceDefaultValue": 0,
+			"enum": [{
+				"text": "否",
+				"value": 0
+			}, {
+				"text": "是",
+				"value": 1
+			}]
+		}
+	}
+}
