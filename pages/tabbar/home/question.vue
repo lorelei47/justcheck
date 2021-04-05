@@ -12,14 +12,15 @@
 			<view class="question-answer-option" v-if="isChoice">
 				<view class="question-answer-option-item" :class="toCtrlClass" @click="toAnswer(item,index)"
 					v-for="(item, index) in questionData.questionOption" :key="index">
-					<text :class="{'question-answer-option-code': clickOptionTrue != index && clickOptionfalse !=
+					<text
+						:class="{'question-answer-option-code': clickOptionTrue != index && clickOptionfalse !=
 							index,
 						'question-answer-option-true': clickOptionTrue == index,
 						'question-answer-option-false': clickOptionfalse == index,}">{{questionOptionStatus(item.choice_code,index)}}</text>
 					<text class="question-answer-option-content">{{item.choice_content}}</text>
 				</view>
 			</view>
-			<view class="question-sketch-btn" v-if="!isChoice">
+			<view class="question-sketch-btn" v-if="!isChoice && !isAnswer">
 				<button class="cu-btn bg-green" @tap="openSketchAnswer">
 					<text class="question-sketch-btn-text">偷偷看一眼答案</text>
 				</button>
@@ -27,6 +28,7 @@
 			<view class="question-answer-content" v-if="isAnswer">
 				<view class="question-answer-content-title">
 					<text>答案</text>
+					<text class="question-answer-content-wrong" @tap="isWrong">!</text>
 				</view>
 				<view class="question-answer-content-content">
 					<text>{{questionData.questionAnswer}}</text>
@@ -46,10 +48,44 @@
 				</button>
 			</view>
 		</view>
+		<view class="cu-modal isWrongModal" :class="modalName=='isWrongModal'?'show':''">
+			<view class="cu-dialog">
+				<view class="cu-bar bg-white justify-end">
+					<view class="content">题目有误</view>
+					<view class="action" @tap="hideModal">
+						<text class="cuIcon-close text-red"></text>
+					</view>
+				</view>
+				<view class="padding text-left">
+					<view class="cu-form-group text-left">
+						<textarea maxlength="-1" @input="textareaInput" placeholder="请描述题目有误的具体原因"></textarea>
+					</view>
+				</view>
+				<view class="cu-bar bg-white justify-center">
+					<view class="action">
+						<button class="cu-btn bg-green" @tap="toSubmitQuestionWrong()">提交</button>
+						<button class="cu-btn line-green text-green margin-left" @tap="hideModal">取消</button>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view class="cu-modal" :class="modalName=='msgModal'?'show':''">
+			<view class="cu-dialog">
+				<view class="cu-bar bg-white justify-end">
+					<view class="content">感谢您的反馈</view>
+					<view class="action" @tap="hideModal">
+						<text class="cuIcon-close text-red"></text>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		mapState,
+	} from 'vuex';
 	import {
 		timestampToTime
 	} from '@/common/util.js';
@@ -58,6 +94,8 @@
 			return {
 				isAnswer: false,
 				isChoice: true,
+				modalName: null,
+				feedbackContent: '',
 				questionData: {},
 				questionTypeList: ['选择题', '简答题'],
 				clickOptionTrue: -1, //下标，选对的时候
@@ -65,7 +103,7 @@
 				startData: {
 					clientX: 0,
 					clientY: 0
-				}
+				},
 			}
 		},
 		onLoad(option) {
@@ -79,6 +117,10 @@
 			}
 		},
 		computed: {
+			...mapState('userStatus', {
+				hasLogin: state => state.hasLogin,
+				userName: state => state.userName
+			}),
 			//选中时选项头文本变更，选中则显示√，选错则为×
 			questionOptionStatus: function() {
 				return function(choiceCode, index) {
@@ -96,9 +138,15 @@
 				return {
 					'onActive': !this.isAnswer,
 				}
-			}
+			},
 		},
 		methods: {
+			hideModal(e) {
+				this.modalName = null
+			},
+			textareaInput(e) {
+				this.feedbackContent = e.detail.value
+			},
 			initState() {
 				this.isChoice = this.questionData.questionType === 1 ? false : true;
 				this.isAnswer = false;
@@ -162,6 +210,31 @@
 			},
 			wrong(e) {
 				this.clickOptionfalse = e;
+			},
+			isWrong() {
+				this.modalName = 'isWrongModal';
+			},
+			toSubmitQuestionWrong() {
+				let _self = this;
+				uniCloud.callFunction({
+					name: "feedback-handler",
+					data: {
+						action: 'submit-question-wrong',
+						param: {
+							submitUser: _self.hasLogin ? _self.userName : '',
+							questionId: _self.questionData.questionId,
+							wrongReason: _self.feedbackContent,
+							submitDate: new Date().getTime()
+						}
+					},
+					success: (res) => {
+						if (res.result.code == 0) {
+							_self.modalName = 'msgModal';
+						}
+					},
+					fail: (e) => {},
+					complete: (e) => {}
+				});
 			}
 		}
 	}
@@ -298,6 +371,23 @@
 				border-top: #d5dceb 2px dashed;
 				padding: 20px 10px 5px;
 				@include beforeIcon;
+
+				.question-answer-content-title {
+					.question-answer-content-wrong {
+						margin-left: 10px;
+						display: inline-block;
+						font-size: 12px;
+						width: 12px;
+						height: 12px;
+						border: #AAAAAA 1px solid;
+						border-radius: 50%;
+						color: #AAAAAA;
+						text-align: center;
+						/* #ifndef MP-WEIXIN */
+						vertical-align: middle;
+						/* #endif */
+					}
+				}
 
 				.question-answer-content-content {
 					margin-top: 15px;
