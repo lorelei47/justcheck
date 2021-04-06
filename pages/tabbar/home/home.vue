@@ -4,6 +4,11 @@
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
 				<input type="text" v-model="searchWord" placeholder="输入搜索的关键词" confirm-type="search"></input>
+				<view v-if="searchWord !== ''" class="uni-searchbar__box-icon-clear" @click="clearInput">
+					<slot name="clearIcon">
+						<uni-icons color="#c0c4cc" size="18" type="clear" />
+					</slot>
+				</view>
 			</view>
 		</view>
 		<view class="page-news">
@@ -127,6 +132,9 @@
 			}
 		},
 		methods: {
+			clearInput() {
+				this.searchWord = "";
+			},
 			loadData(refresh) {
 				if (this.isLoading) {
 					return;
@@ -260,7 +268,7 @@
 				return (s4() + s4() + "-" + s4() + "-4" + s4().substr(0, 3) + "-" + s4() + "-" + s4() + s4() + s4())
 					.toUpperCase();
 			},
-			getTagText(data){
+			getTagText(data) {
 				this.searchWord = data;
 			}
 		}
@@ -363,5 +371,15 @@
 	.loading-more-text {
 		font-size: 28upx;
 		color: #999;
+	}
+
+	.uni-searchbar__box-icon-clear {
+		align-items: center;
+		line-height: 24px;
+		padding-left: 8px;
+		padding-right: 8px;
+		/* #ifdef H5 */
+		cursor: pointer;
+		/* #endif */
 	}
 </style>
