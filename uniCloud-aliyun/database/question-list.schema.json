@@ -98,6 +98,19 @@
 				"text": "困难",
 				"value": 3
 			}]
+		},
+		"is_auditing": {
+			"bsonType": "int",
+			"title": "是否审核",
+			"description": "是否审核：0 无 1 有",
+			"defaultValue": 0,
+			"enum": [{
+				"text": "无",
+				"value": 0
+			}, {
+				"text": "有",
+				"value": 1
+			}]
 		}
 	}
 }

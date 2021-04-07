@@ -142,3 +142,7 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 > day23 (20210406)
 - 增加上传题目页面
 - 替换消息弹窗以及模态窗样式 //todo
+
+> day24 (20210407)
+- 实现上传题目页面各类表单交互。
+- 关于radio作为设置答案的实现的主要思路：1) 设置radio游标 2) 监听游标的变化，更新答案所在选项

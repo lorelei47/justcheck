@@ -15,19 +15,16 @@
 			</view>
 		</view>
 		<view class="center-list">
-			<!-- 暂时不做
-					<view class="center-list-item border-bottom" v-if="hasLogin" @click="addQuestion">
-					<text class="list-icon">&#xe65f;</text>
-					<text class="list-text">新增题目</text>
-					<text class="navigat-arrow">&#xe65e;</text>
-				</view> -->
-			<view class="center-list-item" @click="feedback">
+			<view class="center-list-item border-bottom" v-if="hasLogin" @click="addQuestion">
+				<text class="list-icon">&#xe65f;</text>
+				<text class="list-text">新增题目</text>
+				<text class="navigat-arrow">&#xe65e;</text>
+			</view>
+			<view class="center-list-item border-bottom" @click="feedback">
 				<text class="list-icon">&#xe60b;</text>
 				<text class="list-text">意见反馈</text>
 				<text class="navigat-arrow">&#xe65e;</text>
 			</view>
-		</view>
-		<view class="center-list">
 			<view class="center-list-item" @click="aboutApp">
 				<text class="list-icon">&#xe614;</text>
 				<text class="list-text">关于应用</text>
@@ -141,9 +138,9 @@
 				})
 			},
 			addQuestion() {
-				// uni.navigateTo({
-				// 	url: '/pages/tabbar/user/addQuestion'
-				// })
+				uni.navigateTo({
+					url: '/pages/tabbar/user/addQuestion'
+				})
 			},
 			feedback() {
 				uni.navigateTo({

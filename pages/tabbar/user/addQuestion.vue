@@ -25,7 +25,7 @@
 			</view>
 			<view class="tag-content padding-sm flex flex-wrap">
 				<view class="tag-content-item padding-xs" v-for="(item,index) in questionTagList" :key="index">
-					<view class="remove-btn" @click="clearTag(index)">×</view>
+					<view class="remove-btn" @tap="clearTag(index)">×</view>
 					<view class='cu-tag bg-blue radius'>{{item}}</view>
 				</view>
 			</view>
@@ -39,6 +39,15 @@
 				<view class="title">添加选项</view>
 				<button class="cu-btn cuIcon-add bg-green shadow" @tap="addOption"></button>
 			</view>
+			<radio-group class="question-option-container" @change="radioChange">
+				<view class="cu-form-group" v-for="(item,index) in questionOptionList" :key="index">
+					<view class="title">{{item.choice_code}}</view>
+					<input placeholder="输入选项内容" name="input" @input="textareaOptionConetntInput(index,$event)"></input>
+					<radio :value="item.choice_code" :checked="index == questionOptionIndex" />
+					<button class="cu-btn cuIcon-delete bg-green shadow margin-left"
+						@tap="removeOption(index)"></button>
+				</view>
+			</radio-group>
 
 			<view class="cu-form-group align-start margin-top">
 				<view class="title">答案</view>
@@ -65,6 +74,9 @@
 	import uniPopupMessage from '@/pages/components/uniUi/uni-popup-message/uni-popup-message.vue'
 	import uniPopup from '@/pages/components/uniUi/uni-popup/uni-popup.vue'
 	import uniPopupDialog from '@/pages/components/uniUi/uni-popup-dialog/uni-popup-dialog.vue'
+	import {
+		deepCopy
+	} from '@/common/util.js'
 	export default {
 		components: {
 			uniPopupMessage,
@@ -83,10 +95,19 @@
 				questionDifficultyPicker: ['简单', '中等', '困难'],
 				tagInput: '',
 				questionTagList: [],
+				questionOptionIndex: 0,
 				questionOptionList: [],
+				isAnswer: true,
 				questionContent: '',
 				questionAnswer: '',
 				questionExplain: '',
+			}
+		},
+		watch: {
+			questionOptionIndex: function() {
+				this.questionOptionList.map((item, index) => {
+					item.is_answer = index == this.questionOptionIndex ? true : false;
+				});
 			}
 		},
 		methods: {
@@ -106,14 +127,20 @@
 				this.questionExplain = e.detail.value
 			},
 			addTag() {
+				if (this.tagInput == "") {
+					this.msgType = 'error'
+					this.message = '标签内容不能为空';
+					this.$refs.popupMessage.open()
+					return;
+				}
 				if (this.questionTagList.indexOf(this.tagInput) > -1) {
-					this.msgType = 'warn'
+					this.msgType = 'error'
 					this.message = '该标签已添加';
 					this.$refs.popupMessage.open()
 					return;
 				}
-				if(this.questionTagList.length >=5){
-					this.msgType = 'warn'
+				if (this.questionTagList.length >= 5) {
+					this.msgType = 'error'
 					this.message = '最多可以添加5个标签';
 					this.$refs.popupMessage.open()
 					return;
@@ -124,7 +151,73 @@
 				this.questionTagList.splice(index, 1);
 			},
 			addOption() {
-
+				if (this.questionOptionList.length >= 5) {
+					this.msgType = 'error'
+					this.message = '最多可以添加5个选项';
+					this.$refs.popupMessage.open()
+					return;
+				}
+				let obj = {
+					choice_code: String.fromCharCode(this.questionOptionList.length + 65),
+					choice_content: "",
+					is_answer: (this.questionOptionList.length == this.questionOptionIndex) ? true : false
+				}
+				this.questionOptionList.push(obj);
+			},
+			removeOption(index) {
+				let tempArray = deepCopy(this.questionOptionList);
+				tempArray.splice(index, 1);
+				this.questionOptionList = this.updateQuestionOptionList(tempArray);
+				this.questionOptionIndex = index <= this.questionOptionIndex ? this.questionOptionIndex-1 : this.questionOptionIndex;
+			},
+			updateQuestionOptionList(questionOptionArray) {
+				if (!Array.isArray(questionOptionArray)) {
+					return;
+				}
+				questionOptionArray.map((item, index) => {
+					item.choice_code = String.fromCharCode(index + 65);
+				});
+				return questionOptionArray;
+			},
+			textareaOptionConetntInput(index, e) {
+				this.questionOptionList[index].choice_content = e.detail.value;
+			},
+			radioChange(evt) {
+				for (let i = 0; i < this.questionOptionList.length; i++) {
+					if (this.questionOptionList[i].choice_code === evt.target.value) {
+						this.questionOptionIndex = i;
+						break;
+					}
+				}
+			},
+			submit() {
+				let checkOptionIsNull = false;
+				this.questionOptionList.forEach((item,index)=>{
+					if(item.choice_content == ""){
+						checkOptionIsNull = true;
+						return;
+					}
+				})
+				if(checkOptionIsNull){
+					this.msgType = 'error'
+					this.message = '不允许有空内容选项';
+					this.$refs.popupMessage.open()
+					return;
+				}
+				let hash = {};
+				this.questionOptionList.forEach((item,index)=>{
+					if(!hash[item.choice_content]){
+						hash[item.choice_content] = item.choice_content;
+					}else{
+						checkOptionIsNull = true
+					}
+				})
+				if(checkOptionIsNull){
+					this.msgType = 'error'
+					this.message = '不允许有重复选项';
+					this.$refs.popupMessage.open()
+					return;
+				}
 			}
 		}
 	}
@@ -152,6 +245,12 @@
 					}
 				}
 			}
+
+			.question-option-container {
+				border-top: 1upx solid #eee;
+				width: 100%;
+			}
+
 		}
 
 		.add-btn {

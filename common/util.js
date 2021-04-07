@@ -17,3 +17,19 @@ export function getDeviceUUID() {
 	uni.setStorageSync('uni_deviceId', deviceId)
 	return deviceId;
 }
+
+export function deepCopy(obj) {
+	let itemObj = Array.isArray(obj) ? [] : {}
+	if (typeof obj !== 'object') {
+		return obj;
+	} else {
+		for (let i in obj) {
+			if (typeof obj[i] === 'object') {
+				itemObj[i] = deepCopy(obj[i]);
+			} else {
+				itemObj[i] = obj[i];
+			}
+		}
+		return itemObj;
+	}
+}
