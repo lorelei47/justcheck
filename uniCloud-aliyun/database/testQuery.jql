@@ -22,17 +22,17 @@
 // 	question_explain: 1,
 // 	question_difficulty: 1
 // }).end();
-db.collection('question-list').aggregate().match({
-	question_type: 0,
-	question_difficulty: 1
-}).sample({
-	size: 10
-}).project({
-	_id: 1,
-	question_type: 1,
-	question_content: 1,
-	question_option: 1,
-	question_answer: 1,
-	question_explain: 1,
-	question_difficulty: 1
-}).end();
+// db.collection('question-list').update({
+//   is_auditing: 1,
+// })
+db.collection('question-list').where(
+	db.command.or([{
+			question_content: new RegExp('', 'i')
+		},
+		{
+			question_tag: new RegExp('', 'i')
+		}
+	]).and({
+		question_type: 1
+	})
+).get()

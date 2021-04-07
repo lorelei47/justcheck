@@ -475,7 +475,7 @@
 								}
 							},
 							fail: (e) => {
-								reject(res);
+								reject(e);
 							},
 							complete: (e) => {}
 						});

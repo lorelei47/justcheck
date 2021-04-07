@@ -25,7 +25,9 @@ exports.main = async (event, context) => {
 					{
 						question_tag: new RegExp(params.searchWord, 'i')
 					}
-				])
+				]).and({
+					is_auditing: 1
+				})
 			).orderBy('upload_date', 'desc').get();
 			res = {
 				code: 0,
@@ -44,7 +46,9 @@ exports.main = async (event, context) => {
 			break;
 		case 'get-random-question-item':
 			const getRandomQuestionItemCollection = db.collection('question-list');
-			let getRandomQuestionItem = await getRandomQuestionItemCollection.aggregate().sample({
+			let getRandomQuestionItem = await getRandomQuestionItemCollection.aggregate().match({
+				is_auditing: 1
+			}).sample({
 				size: 1
 			}).end();
 			res = {
@@ -55,7 +59,8 @@ exports.main = async (event, context) => {
 		case 'examination-question-list':
 			const examinationQuestionListCollection = db.collection('question-list');
 			let examinationQuestionList = await examinationQuestionListCollection.aggregate().match({
-				question_type: 0
+				question_type: 0,
+				is_auditing: 1
 			}).sample({
 				size: params.questionNum
 			}).project({
@@ -131,6 +136,27 @@ exports.main = async (event, context) => {
 			res = {
 				code: 0,
 				...reportItem
+			}
+			break;
+		case 'submit-question':
+			const submitQuestionCollection = db.collection('question-list');
+			let submitQuestionCount = await submitQuestionCollection.add({
+				upload_user: params.uploadUser,
+				upload_date: params.uploadDate,
+				question_type: params.questionType,
+				question_title: params.questionContent,
+				question_content: params.questionContent,
+				question_option: params.questionOption,
+				question_answer: params.questionAnswer,
+				question_explain: params.questionExplain,
+				is_wrong: 0,
+				question_tag: params.questionTag,
+				question_difficulty: params.questionDifficulty,
+				is_auditing: 0
+			});
+			res = {
+				code: 0,
+				updateNum: submitQuestionCount
 			}
 			break;
 		default:

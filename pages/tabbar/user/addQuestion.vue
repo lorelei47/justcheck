@@ -67,10 +67,17 @@
 		<uni-popup id="popupMessage" ref="popupMessage" type="message">
 			<uni-popup-message :type="msgType" :message="message" :duration="2000"></uni-popup-message>
 		</uni-popup>
+		<!-- 对话框 -->
+		<uni-popup id="popupDialog" ref="popupDialog" type="dialog">
+			<uni-popup-dialog type="success" title="提示" :content="dialogContent" :before-close="true" @confirm="dialogConfirm" @close="dialogClose"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
+	import {
+		mapState,
+	} from 'vuex';
 	import uniPopupMessage from '@/pages/components/uniUi/uni-popup-message/uni-popup-message.vue'
 	import uniPopup from '@/pages/components/uniUi/uni-popup/uni-popup.vue'
 	import uniPopupDialog from '@/pages/components/uniUi/uni-popup-dialog/uni-popup-dialog.vue'
@@ -88,6 +95,7 @@
 				type: 'top',
 				msgType: 'success',
 				message: '',
+				dialogContent: '',
 				modalName: null,
 				questionTypeIndex: 0,
 				questionTypePicker: ['选择题', '简述题'],
@@ -110,7 +118,18 @@
 				});
 			}
 		},
+		computed: {
+			...mapState('userStatus', {
+				hasLogin: state => state.hasLogin,
+				userName: state => state.userName
+			}),
+		},
 		methods: {
+			popupShow(type, msg) {
+				this.msgType = type;
+				this.message = msg;
+				this.$refs.popupMessage.open()
+			},
 			questionTypeChange(e) {
 				this.questionTypeIndex = e.detail.value
 			},
@@ -128,21 +147,15 @@
 			},
 			addTag() {
 				if (this.tagInput == "") {
-					this.msgType = 'error'
-					this.message = '标签内容不能为空';
-					this.$refs.popupMessage.open()
+					this.popupShow('error', '标签内容不能为空');
 					return;
 				}
 				if (this.questionTagList.indexOf(this.tagInput) > -1) {
-					this.msgType = 'error'
-					this.message = '该标签已添加';
-					this.$refs.popupMessage.open()
+					this.popupShow('error', '该标签已添加');
 					return;
 				}
 				if (this.questionTagList.length >= 5) {
-					this.msgType = 'error'
-					this.message = '最多可以添加5个标签';
-					this.$refs.popupMessage.open()
+					this.popupShow('error', '最多可以添加5个标签');
 					return;
 				}
 				this.questionTagList.push(this.tagInput);
@@ -152,9 +165,7 @@
 			},
 			addOption() {
 				if (this.questionOptionList.length >= 5) {
-					this.msgType = 'error'
-					this.message = '最多可以添加5个选项';
-					this.$refs.popupMessage.open()
+					this.popupShow('error', '最多可以添加5个选项');
 					return;
 				}
 				let obj = {
@@ -168,7 +179,8 @@
 				let tempArray = deepCopy(this.questionOptionList);
 				tempArray.splice(index, 1);
 				this.questionOptionList = this.updateQuestionOptionList(tempArray);
-				this.questionOptionIndex = index <= this.questionOptionIndex ? this.questionOptionIndex-1 : this.questionOptionIndex;
+				this.questionOptionIndex = index <= this.questionOptionIndex ? this.questionOptionIndex - 1 : this
+					.questionOptionIndex;
 			},
 			updateQuestionOptionList(questionOptionArray) {
 				if (!Array.isArray(questionOptionArray)) {
@@ -190,34 +202,102 @@
 					}
 				}
 			},
+			checkForm() {
+				if (this.questionTagList.length == 0) {
+					this.popupShow('error', '至少需要添加1个标签');
+					return false;
+				}
+				//选择题才需要对选项做判断
+				if(this.questionTypeIndex == 0){ 
+					let checkOptionIsNull = false;
+					this.questionOptionList.forEach((item, index) => {
+						if (item.choice_content == "") {
+							checkOptionIsNull = true;
+							return;
+						}
+					})
+					if (checkOptionIsNull) {
+						this.popupShow('error', '不允许有空内容选项');
+						return false;
+					}
+					let hash = {};
+					this.questionOptionList.forEach((item, index) => {
+						if (!hash[item.choice_content]) {
+							hash[item.choice_content] = item.choice_content;
+						} else {
+							checkOptionIsNull = true
+						}
+					})
+					if (checkOptionIsNull) {
+						this.popupShow('error', '不允许有重复选项');
+						return false;
+					}
+				}
+				if (this.questionContent == '') {
+					this.popupShow('error', '题目内容不能为空');
+					return false;
+				}
+				if (this.questionAnswer == '') {
+					this.popupShow('error', '题目答案不能为空');
+					return false;
+				}
+				if (this.questionExplain == '') {
+					this.popupShow('error', '题目解析不能为空');
+					return false;
+				}
+				return true;
+			},
 			submit() {
-				let checkOptionIsNull = false;
-				this.questionOptionList.forEach((item,index)=>{
-					if(item.choice_content == ""){
-						checkOptionIsNull = true;
-						return;
-					}
-				})
-				if(checkOptionIsNull){
-					this.msgType = 'error'
-					this.message = '不允许有空内容选项';
-					this.$refs.popupMessage.open()
+				if (!this.checkForm()) {
 					return;
 				}
-				let hash = {};
-				this.questionOptionList.forEach((item,index)=>{
-					if(!hash[item.choice_content]){
-						hash[item.choice_content] = item.choice_content;
-					}else{
-						checkOptionIsNull = true
+				this.dialogContent = '确认上传题目';
+				this.$refs.popupDialog.open();
+			},
+			dialogConfirm(done) {
+				this.submitQuestion().then(()=>{
+					this.popupShow('success', '上传成功，感谢您对题库的贡献');
+					done()
+				});
+			},
+			dialogClose(done) {
+				this.popupShow('info', '您取消了上传');
+				done()
+			},
+			submitQuestion() {
+				return new Promise((resovle, reject) => {
+					let _self = this;
+					if (this.hasLogin) {
+						uniCloud.callFunction({
+							name: 'question-handler',
+							data: {
+								action: 'submit-question',
+								param: {
+									uploadUser: _self.userName,
+									uploadDate: new Date().getTime(),
+									questionType: _self.questionTypeIndex,
+									questionContent: _self.questionContent,
+									questionOption: _self.questionTypeIndex ? null : _self.questionOptionList,
+									questionAnswer: _self.questionAnswer,
+									questionExplain: _self.questionExplain,
+									questionTag: _self.questionTagList,
+									questionDifficulty: _self.questionDifficultyIndex + 1,
+								}
+							},
+							success: (res) => {
+								if (res.result.code == 0) {
+									resovle();
+								} else {
+									reject();
+								}
+							},
+							fail: (e) => {
+								reject(e);
+							},
+							complete: (e) => {}
+						});
 					}
-				})
-				if(checkOptionIsNull){
-					this.msgType = 'error'
-					this.message = '不允许有重复选项';
-					this.$refs.popupMessage.open()
-					return;
-				}
+				});
 			}
 		}
 	}
