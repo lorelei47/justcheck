@@ -24,15 +24,15 @@
 		<view class="action-row">
 			<navigator url="../reg/reg">注册账号</navigator>
 		</view>
-		<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
+<!-- 		<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
 			<view class="oauth-image" v-for="provider in providerList" :key="provider.value">
-				<image :src="provider.image" @tap="toLogin(provider.value)"></image>
+				<image :src="provider.image" @tap="toLogin(provider.value)"></image> -->
 				<!-- #ifdef MP-WEIXIN -->
-				<button v-if="!isDevtools" open-type="getUserInfo" @getuserinfo="getUserInfo"></button>
+				<!-- <button v-if="!isDevtools" open-type="getUserInfo" @getuserinfo="getUserInfo"></button> -->
 				<!-- #endif -->
-			</view>
+			<!-- </view>
 		</view>
-		<!-- <view class="oauth-row" v-if="hasProvider && !hasAppleLogin && platform ==='ios'"
+		<view class="oauth-row" v-if="hasProvider && !hasAppleLogin && platform ==='ios'"
 			v-bind:style="{top: (positionTop - 50) + 'px'}">
 			<text style="color: #C8C7CC;text-align: center;">暂无法使用苹果登录，请查阅&nbsp;&nbsp;
 				<text style="color: #C8C7CC;text-decoration: underline;" @click="openAppleLoginDoc">Apple登录集成教程</text>
