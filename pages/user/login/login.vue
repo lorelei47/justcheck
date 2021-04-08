@@ -32,12 +32,12 @@
 				<!-- #endif -->
 			</view>
 		</view>
-		<view class="oauth-row" v-if="hasProvider && !hasAppleLogin && platform ==='ios'"
+		<!-- <view class="oauth-row" v-if="hasProvider && !hasAppleLogin && platform ==='ios'"
 			v-bind:style="{top: (positionTop - 50) + 'px'}">
 			<text style="color: #C8C7CC;text-align: center;">暂无法使用苹果登录，请查阅&nbsp;&nbsp;
 				<text style="color: #C8C7CC;text-decoration: underline;" @click="openAppleLoginDoc">Apple登录集成教程</text>
 			</text>
-		</view>
+		</view> -->
 	</view>
 </template>
 
