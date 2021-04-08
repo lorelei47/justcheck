@@ -31,12 +31,17 @@
 				<text class="navigat-arrow">&#xe65e;</text>
 			</view>
 		</view>
-		<view class="center-list" v-if="hasLogin" :loading="logoutBtnLoading" @tap="bindLogout">
+		<view class="center-list" v-if="hasLogin" :loading="logoutBtnLoading" @tap="toLogout">
 			<view class="center-list-item">
 				<text class="list-icon">&#xe65e;</text>
 				<text class="list-text">退出登录</text>
 			</view>
 		</view>
+		<!-- 对话框 -->
+		<uni-popup id="popupDialog" ref="popupDialog" type="dialog">
+			<uni-popup-dialog :content="dialogContent" :before-close="true"
+				@confirm="dialogConfirm" @close="dialogClose"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
@@ -48,9 +53,16 @@
 	import {
 		univerifyLogin
 	} from '@/common/univerify.js'
+	import uniPopup from '@/pages/components/uniUi/uni-popup/uni-popup.vue'
+	import uniPopupDialog from '@/pages/components/uniUi/uni-popup-dialog/uni-popup-dialog.vue'
 	export default {
+		components: {
+			uniPopup,
+			uniPopupDialog
+		},
 		data() {
 			return {
+				dialogContent: "",
 				avatarUrl: "/static/img/logo.png",
 				inviteUrl: '',
 				logoutBtnLoading: false,
@@ -66,6 +78,17 @@
 		},
 		methods: {
 			...mapMutations('userStatus', ['logout']),
+			dialogConfirm(done) {
+				this.bindLogout();
+				done()
+			},
+			dialogClose(done) {
+				done()
+			},
+			toLogout() {
+				this.dialogContent = '确认退出';
+				this.$refs.popupDialog.open();
+			},
 			bindLogin() {
 				if (!this.hasLogin) {
 					univerifyLogin().catch(err => {
@@ -156,7 +179,7 @@
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 	@font-face {
 		font-family: texticons;
 		font-weight: normal;
@@ -164,10 +187,10 @@
 		src: url('https://at.alicdn.com/t/font_984210_5cs13ndgqsn.ttf') format('truetype');
 	}
 
-	page,
-	view {
-		display: flex;
-	}
+	// page,
+	// view {
+	// 	display: flex;
+	// }
 
 	page {
 		background-color: #f8f8f8;
@@ -182,6 +205,7 @@
 	}
 
 	.logo {
+		display: flex;
 		width: 750rpx;
 		height: 240rpx;
 		padding: 20rpx;
@@ -202,6 +226,7 @@
 	}
 
 	.logo-title {
+		display: flex;
 		height: 150rpx;
 		flex: 1;
 		align-items: center;
@@ -236,11 +261,15 @@
 	}
 
 	.center-list-item {
+		display: flex;
 		height: 90rpx;
 		width: 750rpx;
 		box-sizing: border-box;
 		flex-direction: row;
 		padding: 0rpx 20rpx;
+		&:active{
+			background-color: #dcdcdc;
+		}
 	}
 
 	.border-bottom {

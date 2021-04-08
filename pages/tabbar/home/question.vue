@@ -69,16 +69,10 @@
 				</view>
 			</view>
 		</view>
-		<view class="cu-modal" :class="modalName=='msgModal'?'show':''">
-			<view class="cu-dialog">
-				<view class="cu-bar bg-white justify-end">
-					<view class="content">感谢您的反馈</view>
-					<view class="action" @tap="hideModal">
-						<text class="cuIcon-close text-red"></text>
-					</view>
-				</view>
-			</view>
-		</view>
+		<!-- 消息提示 -->
+		<uni-popup id="popupMessage" ref="popupMessage" type="message">
+			<uni-popup-message :type="msgType" :message="message" :duration="2000"></uni-popup-message>
+		</uni-popup>
 	</view>
 </template>
 
@@ -86,12 +80,21 @@
 	import {
 		mapState,
 	} from 'vuex';
+	import uniPopupMessage from '@/pages/components/uniUi/uni-popup-message/uni-popup-message.vue'
+	import uniPopup from '@/pages/components/uniUi/uni-popup/uni-popup.vue'
 	import {
 		timestampToTime
 	} from '@/common/util.js';
 	export default {
+		components: {
+			uniPopupMessage,
+			uniPopup
+		},
 		data() {
 			return {
+				type: 'top',
+				msgType: 'success',
+				message: '',
 				isAnswer: false,
 				isChoice: true,
 				modalName: null,
@@ -141,6 +144,11 @@
 			},
 		},
 		methods: {
+			popupShow(type, msg) {
+				this.msgType = type;
+				this.message = msg;
+				this.$refs.popupMessage.open()
+			},
 			hideModal(e) {
 				this.modalName = null
 			},
@@ -229,7 +237,8 @@
 					},
 					success: (res) => {
 						if (res.result.code == 0) {
-							_self.modalName = 'msgModal';
+							this.hideModal();
+							this.popupShow('success','感谢您的反馈');
 						}
 					},
 					fail: (e) => {},

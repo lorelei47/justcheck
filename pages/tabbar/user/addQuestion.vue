@@ -69,7 +69,7 @@
 		</uni-popup>
 		<!-- 对话框 -->
 		<uni-popup id="popupDialog" ref="popupDialog" type="dialog">
-			<uni-popup-dialog type="success" title="提示" :content="dialogContent" :before-close="true"
+			<uni-popup-dialog :content="dialogContent" :before-close="true"
 				@confirm="dialogConfirm" @close="dialogClose"></uni-popup-dialog>
 		</uni-popup>
 	</view>

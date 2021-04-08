@@ -1,7 +1,7 @@
 <template>
 	<view class="uni-popup-dialog">
 		<view class="uni-dialog-title">
-			<text class="uni-dialog-title-text" :class="['uni-popup__'+dialogType]">{{title}}</text>
+			<!-- <text class="uni-dialog-title-text" :class="['uni-popup__'+dialogType]">{{title}}</text> -->
 		</view>
 		<view class="uni-dialog-content">
 			<text class="uni-dialog-content-text" v-if="mode === 'base'">{{content}}</text>
@@ -160,7 +160,7 @@
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 	.uni-popup-dialog {
 		width: 300px;
 		border-radius: 5px;

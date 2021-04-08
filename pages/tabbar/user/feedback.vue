@@ -10,16 +10,10 @@
 		<view class="padding flex flex-direction">
 			<button class="cu-btn bg-green margin-tb-lg lg" @tap="submit">提交</button>
 		</view>
-		<view class="cu-modal" :class="modalName=='completeModal'?'show':''">
-			<view class="cu-dialog">
-				<view class="cu-bar bg-white justify-end">
-					<view class="content">感谢您宝贵的意见</view>
-					<view class="action" @tap="hideModal">
-						<text class="cuIcon-close text-red"></text>
-					</view>
-				</view>
-			</view>
-		</view>
+		<!-- 消息提示 -->
+		<uni-popup id="popupMessage" ref="popupMessage" type="message">
+			<uni-popup-message :type="msgType" :message="message" :duration="2000"></uni-popup-message>
+		</uni-popup>
 	</view>
 </template>
 
@@ -27,9 +21,18 @@
 	import {
 		mapState,
 	} from 'vuex';
+	import uniPopupMessage from '@/pages/components/uniUi/uni-popup-message/uni-popup-message.vue'
+	import uniPopup from '@/pages/components/uniUi/uni-popup/uni-popup.vue'
 	export default {
+		components: {
+			uniPopupMessage,
+			uniPopup
+		},
 		data() {
 			return {
+				type: 'top',
+				msgType: 'success',
+				message: '',
 				modalName: null,
 				feedbackContent: ''
 			}
@@ -41,6 +44,11 @@
 			})
 		},
 		methods: {
+			popupShow(type, msg) {
+				this.msgType = type;
+				this.message = msg;
+				this.$refs.popupMessage.open()
+			},
 			textareaInput(e) {
 				this.feedbackContent = e.detail.value
 			},
@@ -61,11 +69,13 @@
 					},
 					success: (res) => {
 						if (res.result.code == 0) {
-							_self.modalName = 'completeModal';
+							_self.popupShow('success', '感谢您宝贵的意见');
 						}
 					},
 					fail: (e) => {},
-					complete: (e) => {}
+					complete: (e) => {
+						_self.hideModal();
+					}
 				});
 			}
 		}
@@ -82,6 +92,10 @@
 			font-weight: bold;
 		}
 
-		.feedback-content {}
+		.feedback-content {
+			textarea{
+				height: 50vh;
+			}
+		}
 	}
 </style>

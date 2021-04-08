@@ -22,17 +22,17 @@
 // 	question_explain: 1,
 // 	question_difficulty: 1
 // }).end();
-// db.collection('question-list').update({
-//   is_auditing: 1,
-// })
-db.collection('question-list').where(
-	db.command.or([{
-			question_content: new RegExp('', 'i')
-		},
-		{
-			question_tag: new RegExp('', 'i')
-		}
-	]).and({
-		is_auditing: 1
-	})
-).orderBy('upload_date', 'desc').get()
+db.collection('question-list').doc('605847acf6daa45203eb7acf').update({
+	is_wrong: 1
+})
+// db.collection('question-list').where(
+// 	db.command.or([{
+// 			question_content: new RegExp('', 'i')
+// 		},
+// 		{
+// 			question_tag: new RegExp('', 'i')
+// 		}
+// 	]).and({
+// 		is_auditing: 1
+// 	})
+// ).orderBy('upload_date', 'desc').get()

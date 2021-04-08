@@ -32,16 +32,22 @@ exports.main = async (event, context) => {
 			//题目报错提交
 		case 'submit-question-wrong':
 			const submitQuestionWrongCollection = db.collection('question-wrong-notes');
-			let submitQuestionWrongCount = await submitQuestionWrongCollection.add({
+			let wrongRes = await submitQuestionWrongCollection.add({
 				submit_user: params.submitUser,
 				question_id: params.questionId,
 				wrong_reason: params.wrongReason,
 				submit_date: params.submitDate,
 				is_finish: 0
 			});
+			const updateQuestionWrongCollection = db.collection('question-list');
+			let wrongCount = await updateQuestionWrongCollection.where({
+				_id: params.questionId
+			}).update({
+				is_wrong: 1
+			})
 			res = {
 				code: 0,
-				updateNum: submitQuestionWrongCount
+				updateNum: wrongCount
 			}
 			break;
 		default:

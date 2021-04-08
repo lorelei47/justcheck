@@ -133,6 +133,10 @@
 						border: #35aeff 1px solid;
 						border-radius: 5px;
 						box-shadow: 0.5px 0px 1px #a6caec;
+						&:active{
+							background-color: #356cd3;
+							border: #356cd3 1px solid;
+						}
 					}
 
 					.easyIcon {

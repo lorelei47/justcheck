@@ -118,7 +118,8 @@
 							</view>
 						</view>
 						<view class="report-modal-question">
-							<uni-list v-if="hackReset" ref="list" :scroll-y="true" class="report-modal-question-list listview">
+							<uni-list v-if="hackReset" ref="list" :scroll-y="true"
+								class="report-modal-question-list listview">
 								<view class="report-modal-question-list-item cu-bar solid-bottom"
 									v-for="(item, index) in reportItem.question_list" :key="index">
 									<view class="list-item-question-content">
@@ -138,17 +139,11 @@
 					</view>
 				</view>
 			</view>
-			<view class="cu-modal" :class="modalName=='showModal'?'show':''">
-				<view class="cu-dialog">
-					<view class="cu-bar bg-white justify-end">
-						<view class="content">操作超时，请重试</view>
-						<view class="action" @tap="hideModal">
-							<text class="cuIcon-close text-red"></text>
-						</view>
-					</view>
-				</view>
-			</view>
 		</view>
+		<!-- 消息提示 -->
+		<uni-popup id="popupMessage" ref="popupMessage" type="message">
+			<uni-popup-message :type="msgType" :message="message" :duration="2000"></uni-popup-message>
+		</uni-popup>
 	</view>
 </template>
 
@@ -164,13 +159,20 @@
 	} from '@/common/util.js';
 	import uniList from '@/pages/components/colorUi/uni-list.vue';
 	import examinationDetail from '@/pages/components/examination/examination-detail.vue';
+	import uniPopupMessage from '@/pages/components/uniUi/uni-popup-message/uni-popup-message.vue'
+	import uniPopup from '@/pages/components/uniUi/uni-popup/uni-popup.vue'
 	export default {
 		components: {
 			uniList,
-			examinationDetail
+			examinationDetail,
+			uniPopupMessage,
+			uniPopup
 		},
 		data() {
 			return {
+				type: 'top',
+				msgType: 'success',
+				message: '',
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
 				tab: [], //tab列表
@@ -195,7 +197,7 @@
 				nextBtn: '下一题',
 				rownum: 0, //题目游标
 				reportList: [], //报告列表
-				reportItem: {} ,//测验报告明细
+				reportItem: {}, //测验报告明细
 				hackReset: false //组件刷新标志
 			};
 		},
@@ -284,7 +286,12 @@
 			}
 		},
 		methods: {
-			resComponent(){
+			popupShow(type, msg) {
+				this.msgType = type;
+				this.message = msg;
+				this.$refs.popupMessage.open()
+			},
+			resComponent() {
 				this.hackReset = false;
 				this.$nextTick(() => {
 					this.hackReset = true;
@@ -317,7 +324,6 @@
 				}
 			},
 			async toBegin(item) {
-				this.hideModal();
 				let _self = this;
 				await uniCloud.callFunction({
 					name: 'question-handler',
@@ -364,9 +370,11 @@
 						_self.initExam();
 					},
 					fail: (e) => {
-						_self.modalName = 'showModal';
+						_self.popupShow('error', '操作超时，请重试');
 					},
-					complete: (e) => {}
+					complete: (e) => {
+						_self.hideModal();
+					}
 				});
 			},
 			createCountdownTimer(time) {
@@ -602,7 +610,7 @@
 	.center {
 		display: flex;
 		flex-direction: column;
-		
+
 		.tab-scroll {
 			/* #ifndef MP-WEIXIN */
 			top: 45px;
