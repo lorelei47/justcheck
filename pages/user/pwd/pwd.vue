@@ -8,7 +8,7 @@
 		</view>
 
 		<view class="btn-row">
-			<button class="login-btn" @tap="findPassword">提交</button>
+			<button class="bg-green" @tap="findPassword">提交</button>
 		</view>
 	</view>
 </template>

@@ -15,7 +15,7 @@
 			</view>
 		</view>
 		<view class="btn-row">
-			<button class="login-btn" @tap="register">注册并登录</button>
+			<button class="bg-green" @tap="register">注册并登录</button>
 		</view>
 	</view>
 </template>

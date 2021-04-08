@@ -33,6 +33,6 @@ db.collection('question-list').where(
 			question_tag: new RegExp('', 'i')
 		}
 	]).and({
-		question_type: 1
+		is_auditing: 1
 	})
-).get()
+).orderBy('upload_date', 'desc').get()

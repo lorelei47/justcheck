@@ -146,3 +146,6 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 > day24 (20210407)
 - 实现上传题目页面各类表单交互。
 - 关于radio作为设置答案的实现的主要思路：1) 设置radio游标 2) 监听游标的变化，更新答案所在选项
+
+> day25 (20210408)
+- 优化上传题目页面表单交互，小程序端兼容测试

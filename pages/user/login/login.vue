@@ -19,7 +19,7 @@
 			</view>
 		</view>
 		<view class="btn-row">
-			<button class="login-btn" :loading="loginBtnLoading" @tap="bindLogin">登录</button>
+			<button class="bg-green" :loading="loginBtnLoading" @tap="bindLogin">登录</button>
 		</view>
 		<view class="action-row">
 			<navigator url="../reg/reg">注册账号</navigator>

@@ -32,7 +32,7 @@
 
 			<view class="cu-form-group align-start margin-top">
 				<view class="title">题目</view>
-				<textarea maxlength="-1" :disabled="modalName!=null" @input="textareaQuestionContent"
+				<textarea maxlength="100" v-model="questionContent" :disabled="modalName!=null" @input="textareaQuestionContent"
 					placeholder="输入题目内容"></textarea>
 			</view>
 			<view class="cu-form-group" v-if="!questionTypeIndex">
@@ -51,12 +51,12 @@
 
 			<view class="cu-form-group align-start margin-top">
 				<view class="title">答案</view>
-				<textarea maxlength="-1" :disabled="modalName!=null" @input="textareaAnswer"
+				<textarea maxlength="-1" v-model="questionAnswer" :disabled="modalName!=null" @input="textareaAnswer"
 					placeholder="输入题目答案"></textarea>
 			</view>
 			<view class="cu-form-group align-start">
 				<view class="title">解析</view>
-				<textarea maxlength="-1" :disabled="modalName!=null" @input="textareaExplain"
+				<textarea maxlength="-1" v-model="questionExplain" :disabled="modalName!=null" @input="textareaExplain"
 					placeholder="输入题目解析"></textarea>
 			</view>
 		</form>
@@ -69,7 +69,8 @@
 		</uni-popup>
 		<!-- 对话框 -->
 		<uni-popup id="popupDialog" ref="popupDialog" type="dialog">
-			<uni-popup-dialog type="success" title="提示" :content="dialogContent" :before-close="true" @confirm="dialogConfirm" @close="dialogClose"></uni-popup-dialog>
+			<uni-popup-dialog type="success" title="提示" :content="dialogContent" :before-close="true"
+				@confirm="dialogConfirm" @close="dialogClose"></uni-popup-dialog>
 		</uni-popup>
 	</view>
 </template>
@@ -105,13 +106,17 @@
 				questionTagList: [],
 				questionOptionIndex: 0,
 				questionOptionList: [],
-				isAnswer: true,
 				questionContent: '',
 				questionAnswer: '',
 				questionExplain: '',
 			}
 		},
 		watch: {
+			questionContent: function() {
+				if (this.questionContent.length >= 100) {
+					this.popupShow('error', '题目不能超过100个字');
+				}
+			},
 			questionOptionIndex: function() {
 				this.questionOptionList.map((item, index) => {
 					item.is_answer = index == this.questionOptionIndex ? true : false;
@@ -125,6 +130,17 @@
 			}),
 		},
 		methods: {
+			initPage() {
+				this.questionTypeIndex = 0;
+				this.questionDifficultyIndex = 0;
+				this.tagInput = '';
+				this.questionTagList = [];
+				this.questionOptionIndex = 0;
+				this.questionOptionList = [];
+				this.questionContent = '';
+				this.questionAnswer = '';
+				this.questionExplain = '';
+			},
 			popupShow(type, msg) {
 				this.msgType = type;
 				this.message = msg;
@@ -159,6 +175,7 @@
 					return;
 				}
 				this.questionTagList.push(this.tagInput);
+				this.tagInput = '';
 			},
 			clearTag(index) {
 				this.questionTagList.splice(index, 1);
@@ -208,7 +225,7 @@
 					return false;
 				}
 				//选择题才需要对选项做判断
-				if(this.questionTypeIndex == 0){ 
+				if (this.questionTypeIndex == 0) {
 					let checkOptionIsNull = false;
 					this.questionOptionList.forEach((item, index) => {
 						if (item.choice_content == "") {
@@ -255,9 +272,11 @@
 				this.$refs.popupDialog.open();
 			},
 			dialogConfirm(done) {
-				this.submitQuestion().then(()=>{
+				this.submitQuestion().then(() => {
 					this.popupShow('success', '上传成功，感谢您对题库的贡献');
 					done()
+				}).then(()=>{
+					this.initPage();
 				});
 			},
 			dialogClose(done) {
@@ -277,7 +296,8 @@
 									uploadDate: new Date().getTime(),
 									questionType: _self.questionTypeIndex,
 									questionContent: _self.questionContent,
-									questionOption: _self.questionTypeIndex ? null : _self.questionOptionList,
+									questionOption: _self.questionTypeIndex ? null : _self
+										.questionOptionList,
 									questionAnswer: _self.questionAnswer,
 									questionExplain: _self.questionExplain,
 									questionTag: _self.questionTagList,
