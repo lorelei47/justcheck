@@ -15,6 +15,11 @@
 			</view>
 		</view>
 		<view class="center-list">
+			<view class="center-list-item border-bottom" v-if="hasLogin" @click="myQuestion">
+				<text class="list-icon">&#xe65f;</text>
+				<text class="list-text">题目管理</text>
+				<text class="navigat-arrow">&#xe65e;</text>
+			</view>
 			<view class="center-list-item border-bottom" v-if="hasLogin" @click="addQuestion">
 				<text class="list-icon">&#xe65f;</text>
 				<text class="list-text">新增题目</text>
@@ -62,12 +67,47 @@
 		},
 		data() {
 			return {
-				dialogContent: "",
+				dialogContent: '',
 				avatarUrl: "/static/img/logo.png",
 				inviteUrl: '',
 				logoutBtnLoading: false,
 				hasPwd: uni.getStorageSync('uni_id_has_pwd')
 			};
+		},
+		onLoad() {
+			let uniIdToken = uni.getStorageSync('uni_id_token')
+			if (uniIdToken) {
+				this.login(uni.getStorageSync('username'))
+				uniCloud.callFunction({
+					name: 'user-center',
+					data: {
+						action: 'checkToken',
+					},
+					success: (e) => {
+			
+						console.log('checkToken success', e);
+			
+						if (e.result.code > 0) {
+							//token过期或token不合法，重新登录
+							if (this.forcedLogin) {
+								uni.reLaunch({
+									url: '../login/login'
+								});
+							} else {
+								uni.navigateTo({
+									url: '../login/login'
+								});
+							}
+						}
+					},
+					fail(e) {
+						uni.showModal({
+							content: JSON.stringify(e),
+							showCancel: false
+						})
+					}
+				})
+			}
 		},
 		computed: {
 			...mapState('userStatus', {
@@ -77,7 +117,7 @@
 			})
 		},
 		methods: {
-			...mapMutations('userStatus', ['logout']),
+			...mapMutations('userStatus', ['logout','login']),
 			dialogConfirm(done) {
 				this.bindLogout();
 				done()
@@ -86,7 +126,7 @@
 				done()
 			},
 			toLogout() {
-				this.dialogContent = '确认退出';
+				this.dialogContent = '确认退出登录';
 				this.$refs.popupDialog.open();
 			},
 			bindLogin() {
@@ -158,6 +198,11 @@
 			resPwd() {
 				uni.navigateTo({
 					url: '/pages/user/pwd/update-password'
+				})
+			},
+			myQuestion(){
+				uni.navigateTo({
+					url: '/pages/tabbar/user/myQuestion'
 				})
 			},
 			addQuestion() {

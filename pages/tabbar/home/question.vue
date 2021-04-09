@@ -223,6 +223,10 @@
 				this.modalName = 'isWrongModal';
 			},
 			toSubmitQuestionWrong() {
+				if(this.feedbackContent == ''){
+					this.popupShow('error', '请描述题目有误的具体原因');
+					return;
+				}
 				let _self = this;
 				uniCloud.callFunction({
 					name: "feedback-handler",

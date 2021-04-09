@@ -45,6 +45,9 @@
 						<text class="lg text-gray cuIcon-time"></text>
 						<text class="time">{{minutes}}:{{seconds}}</text>
 					</text>
+					<view class="text-red warn-text">
+						<text>*测验开始请不要切换页面，否则将强制提交结果</text>
+					</view>
 				</view>
 				<view class="exam-question-main">
 					<examination-detail v-if="hackReset" :questionDetail="getQuestionDetail"
@@ -144,6 +147,11 @@
 		<uni-popup id="popupMessage" ref="popupMessage" type="message">
 			<uni-popup-message :type="msgType" :message="message" :duration="2000"></uni-popup-message>
 		</uni-popup>
+		<!-- 对话框 -->
+		<uni-popup id="popupDialog" ref="popupDialog" type="dialog">
+			<uni-popup-dialog :content="dialogContent" :before-close="true" @confirm="dialogConfirm"
+				@close="dialogClose"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
@@ -161,18 +169,21 @@
 	import examinationDetail from '@/pages/components/examination/examination-detail.vue';
 	import uniPopupMessage from '@/pages/components/uniUi/uni-popup-message/uni-popup-message.vue'
 	import uniPopup from '@/pages/components/uniUi/uni-popup/uni-popup.vue'
+	import uniPopupDialog from '@/pages/components/uniUi/uni-popup-dialog/uni-popup-dialog.vue'
 	export default {
 		components: {
 			uniList,
 			examinationDetail,
 			uniPopupMessage,
-			uniPopup
+			uniPopup,
+			uniPopupDialog
 		},
 		data() {
 			return {
 				type: 'top',
 				msgType: 'success',
 				message: '',
+				dialogContent: '',
 				StatusBar: this.StatusBar,
 				CustomBar: this.CustomBar,
 				tab: [], //tab列表
@@ -228,6 +239,9 @@
 			this.getRecordList().catch(err => {
 				console.log(err);
 			});
+		},
+		onHide() {
+			this.submitExam();
 		},
 		watch: {
 			getQuestionDetail() {
@@ -291,6 +305,13 @@
 				this.message = msg;
 				this.$refs.popupMessage.open()
 			},
+			dialogConfirm(done) {
+				this.submitExam();
+				done()
+			},
+			dialogClose(done) {
+				done()
+			},
 			resComponent() {
 				this.hackReset = false;
 				this.$nextTick(() => {
@@ -298,6 +319,11 @@
 				});
 			},
 			tabSelect(e) {
+				if (this.isBegin) {
+					this.dialogContent = '确认结束测验';
+					this.$refs.popupDialog.open();
+					return;
+				}
 				this.TabCur = e.currentTarget.dataset.cur;
 				if (this.TabCur == 'record') {
 					this.isRecord = true;
@@ -686,7 +712,7 @@
 
 				.exam-question-title {
 					position: relative;
-					height: 50px;
+					height: 40px;
 
 					.count-down {
 						position: absolute;
@@ -696,6 +722,12 @@
 						.time {
 							margin-left: 5px;
 						}
+					}
+
+					.warn-text {
+						margin-top: 5px;
+						font-size: 10px;
+						font-family: serif;
 					}
 				}
 

@@ -56,6 +56,10 @@
 				this.modalName = null
 			},
 			submit() {
+				if(this.feedbackContent == ''){
+					this.popupShow('error', '请输入您的问题和意见');
+					return;
+				}
 				let _self = this;
 				uniCloud.callFunction({
 					name: "feedback-handler",

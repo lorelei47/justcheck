@@ -71,6 +71,14 @@
             }
             
         }
+        ,{
+            "path" : "pages/tabbar/user/myQuestion",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "题目管理"
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",

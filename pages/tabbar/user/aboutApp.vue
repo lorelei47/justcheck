@@ -1,12 +1,12 @@
 <template>
 	<view class="center">
 		<view class="about-title">
-			<text>about just-check</text>
+			<text>justcheck</text>
 		</view>
 		<view class="about-content">
 			<p>本应用收集了各类前端试题，可以在首页上筛选你想看的题目去做，试题以简述和单选形式。</p>
 			<p>试题功能是，生成一套选择题供用户去模拟试题，试题不支持简述题形式，分了三种难度，每种难度会根据题目难度，试题数目，以及时限区分。</p>
-			<p>本应用注册的用户是保存用户的测验记录，游客模式也可以使用测验功能，但不记录生成报告，如果需要记录，欢迎注册登录</p>
+			<p>本应用注册的用户是保存用户的测验记录和上传题目作用，游客模式也可以使用测验功能，但不记录生成报告，如果需要记录，欢迎注册登录</p>
 		</view>
 		<view class="about-footer">
 			<!-- #ifdef MP-WEIXIN -->
