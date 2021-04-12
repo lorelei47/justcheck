@@ -24,6 +24,9 @@ exports.main = async (event, context) => {
 					},
 					{
 						question_tag: new RegExp(params.searchWord, 'i')
+					},
+					{
+						upload_user: params.userName
 					}
 				]).and({
 					is_auditing: 1

@@ -160,3 +160,6 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 > day26 (20210409)
 - 优化了注册登录逻辑
 - 增加了测验过程禁止切换页面，以及提醒
+
+> day27 (20210412)
+- 增加题目管理页面

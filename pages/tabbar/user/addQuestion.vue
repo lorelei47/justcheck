@@ -32,8 +32,8 @@
 
 			<view class="cu-form-group align-start margin-top">
 				<view class="title">题目</view>
-				<textarea maxlength="100" v-model="questionContent" :disabled="modalName!=null" @input="textareaQuestionContent"
-					placeholder="输入题目内容"></textarea>
+				<textarea maxlength="100" v-model="questionContent" :disabled="modalName!=null"
+					@input="textareaQuestionContent" placeholder="输入题目内容"></textarea>
 			</view>
 			<view class="cu-form-group" v-if="!questionTypeIndex">
 				<view class="title">添加选项</view>
@@ -42,26 +42,27 @@
 			<radio-group class="question-option-container" @change="radioChange">
 				<view class="cu-form-group" v-for="(item,index) in questionOptionList" :key="index">
 					<view class="title">{{item.choice_code}}</view>
-					<input placeholder="输入选项内容" name="input" @input="textareaOptionConetntInput(index,$event)"></input>
+					<input placeholder="输入选项内容" v-model="item.choice_content" name="input"
+						@input="textareaOptionConetntInput(index,$event)"></input>
 					<radio :value="item.choice_code" :checked="index == questionOptionIndex" />
 					<button class="cu-btn cuIcon-delete bg-green shadow margin-left"
 						@tap="removeOption(index)"></button>
 				</view>
 			</radio-group>
 
-			<view class="cu-form-group align-start margin-top">
+			<view class="question-answer cu-form-group align-start margin-top">
 				<view class="title">答案</view>
 				<textarea maxlength="-1" v-model="questionAnswer" :disabled="modalName!=null" @input="textareaAnswer"
 					placeholder="输入题目答案"></textarea>
 			</view>
-			<view class="cu-form-group align-start">
+			<view class="question-explain cu-form-group align-start">
 				<view class="title">解析</view>
 				<textarea maxlength="-1" v-model="questionExplain" :disabled="modalName!=null" @input="textareaExplain"
 					placeholder="输入题目解析"></textarea>
 			</view>
 		</form>
 		<view class="add-btn flex flex-direction">
-			<button class="cu-btn bg-green margin-tb-lg lg" @tap="submit">提交</button>
+			<button class="cu-btn bg-green margin-tb-lg lg" @tap="submit">{{submitType}}</button>
 		</view>
 		<!-- 消息提示 -->
 		<uni-popup id="popupMessage" ref="popupMessage" type="message">
@@ -69,8 +70,8 @@
 		</uni-popup>
 		<!-- 对话框 -->
 		<uni-popup id="popupDialog" ref="popupDialog" type="dialog">
-			<uni-popup-dialog :content="dialogContent" :before-close="true"
-				@confirm="dialogConfirm" @close="dialogClose"></uni-popup-dialog>
+			<uni-popup-dialog :content="dialogContent" :before-close="true" @confirm="dialogConfirm"
+				@close="dialogClose"></uni-popup-dialog>
 		</uni-popup>
 	</view>
 </template>
@@ -98,6 +99,7 @@
 				message: '',
 				dialogContent: '',
 				modalName: null,
+				editType: 'add', // 新增：add , 修改：update
 				questionTypeIndex: 0,
 				questionTypePicker: ['选择题', '简述题'],
 				questionDifficultyIndex: 0,
@@ -109,6 +111,25 @@
 				questionContent: '',
 				questionAnswer: '',
 				questionExplain: '',
+			}
+		},
+		onLoad(option) {
+			if (JSON.stringify(option) !== "{}") {
+				const questionDetail = JSON.parse(decodeURIComponent(option.detail));
+				this.questionTypeIndex = questionDetail.questionType;
+				this.questionDifficultyIndex = questionDetail.questionDifficulty - 1;
+				this.questionTagList = questionDetail.questionTag;
+				this.questionOptionList = questionDetail.questionOption;
+				this.questionContent = questionDetail.questionContent;
+				this.questionAnswer = questionDetail.questionAnswer;
+				this.questionExplain = questionDetail.questionExplain;
+				this.editType = 'update';
+				this.questionOptionList.forEach((item, index) => {
+					if (item.is_answer) {
+						this.questionOptionIndex = index;
+						return;
+					}
+				})
 			}
 		},
 		watch: {
@@ -128,6 +149,9 @@
 				hasLogin: state => state.hasLogin,
 				userName: state => state.userName
 			}),
+			submitType() {
+				return this.editType == 'add' ? '提交' : '保存'
+			}
 		},
 		methods: {
 			initPage() {
@@ -275,7 +299,7 @@
 				this.submitQuestion().then(() => {
 					this.popupShow('success', '上传成功，感谢您对题库的贡献');
 					done()
-				}).then(()=>{
+				}).then(() => {
 					this.initPage();
 				});
 			},
@@ -351,6 +375,10 @@
 				width: 100%;
 			}
 
+			.question-answer,
+			.question-explain {
+				textarea {}
+			}
 		}
 
 		.add-btn {

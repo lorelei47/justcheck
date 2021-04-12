@@ -53,7 +53,7 @@
 		}, {
 			"path": "pages/tabbar/user/addQuestion",
 			"style": {
-				"navigationBarTitleText": "新增题目"
+				"navigationBarTitleText": "题目维护"
 			}
 		}, {
 			"path": "pages/tabbar/user/aboutApp",
