@@ -158,6 +158,7 @@
 <script>
 	import {
 		mapState,
+		mapMutations
 	} from 'vuex';
 	import {
 		univerifyLogin
@@ -251,17 +252,15 @@
 					},
 					success: (e) => {
 			
-						console.log('checkToken success', e);
-			
 						if (e.result.code > 0) {
 							//token过期或token不合法，重新登录
 							if (this.forcedLogin) {
 								uni.reLaunch({
-									url: '../login/login'
+									url: '/pages/user/login/login'
 								});
 							} else {
 								uni.navigateTo({
-									url: '../login/login'
+									url: '/pages/user/login/login'
 								});
 							}
 						}
@@ -302,6 +301,7 @@
 		computed: {
 			...mapState('userStatus', {
 				hasLogin: state => state.hasLogin,
+				forcedLogin: state => state.forcedLogin,
 				userName: state => state.userName
 			}),
 			changeTimestampToTime: function() {
@@ -337,6 +337,7 @@
 			}
 		},
 		methods: {
+			...mapMutations('userStatus', ['logout','login']),
 			popupShow(type, msg) {
 				this.msgType = type;
 				this.message = msg;

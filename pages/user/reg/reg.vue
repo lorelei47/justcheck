@@ -73,8 +73,6 @@
 						params: data
 					},
 					success(e) {
-						console.log("注册", e);
-
 						if (e.result.code === 0) {
 							uni.showToast({
 								title: '注册成功'

@@ -233,8 +233,6 @@
 					},
 					success: (e) => {
 
-						console.log('login success', e);
-
 						if (e.result.code == 0) {
 							const username = e.result.username || '新用户'
 							uni.setStorageSync('uni_id_token', e.result.token)
@@ -333,7 +331,6 @@
 					content: `${value}登录只演示登录api能力，暂未关联云端数据`,
 					showCancel: false,
 					complete: () => {
-						console.log(`${value}登录只演示登录api能力，暂未关联云端数据`);
 						uni.login({
 							provider: value,
 							success: (res) => {
@@ -432,7 +429,6 @@
 						params: result.userInfo
 					},
 					success: (e) => {
-						console.log('loginByApple success', e);
 						if (!e.success) {
 							uni.showModal({
 								showCancel: false,

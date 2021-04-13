@@ -84,18 +84,16 @@
 						action: 'checkToken',
 					},
 					success: (e) => {
-			
-						console.log('checkToken success', e);
-			
+						
 						if (e.result.code > 0) {
 							//token过期或token不合法，重新登录
 							if (this.forcedLogin) {
 								uni.reLaunch({
-									url: '../login/login'
+									url: '/pages/user/login/login'
 								});
 							} else {
 								uni.navigateTo({
-									url: '../login/login'
+									url: '/pages/user/login/login'
 								});
 							}
 						}
@@ -158,8 +156,6 @@
 						action: 'logout'
 					},
 					success: (e) => {
-
-						console.log('logout success', e);
 
 						if (e.result.code == 0) {
 							this.logout();
