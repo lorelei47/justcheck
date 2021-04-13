@@ -10,17 +10,29 @@
 				<view class="cu-item question-item" :class="modalName=='move-box-'+ index?'move-cur':''"
 					v-for="(item,index) in dataList" :key="index" @touchstart="ListTouchStart"
 					@touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index">
-					<view class="isVerify"></view>
+					<view class="isVerify">
+						<text
+							:class="item.isAuditing ? 'text-green' : 'text-red' ">{{getIsAuditing(item.isAuditing)}}</text>
+					</view>
 					<view class="question-content">
 						<question-item :questionItem="item" @click="goDetail(item)">
 						</question-item>
 					</view>
-					<view class="move">
+					<view class="move" @click="deleteQuestion(item.questionId,$event)">
 						<view class="bg-red">删除</view>
 					</view>
 				</view>
 			</view>
 		</uni-list>
+		<!-- 消息提示 -->
+		<uni-popup id="popupMessage" ref="popupMessage" type="message">
+			<uni-popup-message :type="msgType" :message="message" :duration="2000"></uni-popup-message>
+		</uni-popup>
+		<!-- 对话框 -->
+		<uni-popup id="popupDialog" ref="popupDialog" type="dialog">
+			<uni-popup-dialog :content="dialogContent" :before-close="true" @confirm="dialogConfirm"
+				@close="dialogClose"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
@@ -33,20 +45,34 @@
 	} from '@/common/util.js';
 	import uniList from '@/pages/components/colorUi/uni-list.vue';
 	import questionItem from '@/pages/components/home/question-item.vue';
+	import uniPopupMessage from '@/pages/components/uniUi/uni-popup-message/uni-popup-message.vue'
+	import uniPopup from '@/pages/components/uniUi/uni-popup/uni-popup.vue'
+	import uniPopupDialog from '@/pages/components/uniUi/uni-popup-dialog/uni-popup-dialog.vue'
 	export default {
 		components: {
 			uniList,
-			questionItem
+			questionItem,
+			uniPopupMessage,
+			uniPopup,
+			uniPopupDialog
 		},
 		data() {
 			return {
+				type: 'top',
+				msgType: 'success',
+				message: '',
+				dialogContent: '',
 				modalName: null,
 				listTouchStart: 0,
 				listTouchDirection: null,
 				dataList: [],
+				deleteId: ''
 			}
 		},
 		created() {
+			this.getMyQuestion();
+		},
+		onShow() {
 			this.getMyQuestion();
 		},
 		computed: {
@@ -54,8 +80,18 @@
 				hasLogin: state => state.hasLogin,
 				userName: state => state.userName
 			}),
+			getIsAuditing: function() {
+				return function(isAuditing) {
+					return isAuditing ? '已审核' : '未审核';
+				}
+			}
 		},
 		methods: {
+			popupShow(type, msg) {
+				this.msgType = type;
+				this.message = msg;
+				this.$refs.popupMessage.open()
+			},
 			// ListTouch触摸开始
 			ListTouchStart(e) {
 				this.listTouchStart = e.touches[0].pageX
@@ -81,7 +117,7 @@
 						data: {
 							action: 'question-list',
 							param: {
-								userName: _self.hasLogin,
+								userName: _self.userName,
 							}
 						},
 						success: (res) => {
@@ -100,7 +136,8 @@
 										questionOption: question.question_option,
 										questionAnswer: question.question_answer,
 										questionExplain: question.question_explain,
-										uploadUser: question.upload_user
+										uploadUser: question.upload_user,
+										isAuditing: question.is_auditing
 									};
 								});
 								_self.dataList = data_list;
@@ -118,10 +155,58 @@
 			},
 			goDetail(detail) {
 				uni.navigateTo({
-					url: '/pages/tabbar/user/addQuestion?detail=' + encodeURIComponent(JSON.stringify(detail).replace(
-						/%/g, "%25")),
+					url: '/pages/tabbar/user/addQuestion?detail=' + encodeURIComponent(JSON.stringify(detail)
+						.replace(
+							/%/g, "%25")),
 				});
 			},
+			deleteQuestion(id,e) {
+				e.stopPropagation();
+				if (id) {
+					this.deleteId = id;
+					this.dialogContent = '确认删除该题目';
+					this.$refs.popupDialog.open();
+				}
+			},
+			dialogConfirm(done) {
+				this.deleteQuestionSubmit().then(()=>{
+					this.popupShow('success', '删除成功');
+					this.getMyQuestion();
+				});
+				done()
+			},
+			dialogClose(done) {
+				done()
+			},
+			deleteQuestionSubmit() {
+				if(this.hasLogin){
+					return;
+				}
+				let _self = this;
+				return new Promise((resovle, reject) => {
+					let _self = this;
+					uniCloud.callFunction({
+						name: 'question-handler',
+						data: {
+							action: 'delete-question',
+							param: {
+								questionId: _self.deleteId,
+							}
+						},
+						success: (res) => {
+							if (res.result.code == 0) {
+								resovle();
+							} else {
+								reject();
+							}
+						},
+						fail: (e) => {
+							reject(e);
+						},
+						complete: (e) => {}
+					})
+				});
+			}
 		}
 	}
 </script>
@@ -133,8 +218,11 @@
 
 			.question-item {
 				.isVerify {
+					text-align: center;
 					width: 50px;
+					font-weight: bold;
 				}
+
 				.question-content {
 					width: calc(100% - 50px)
 				}

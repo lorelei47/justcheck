@@ -17,6 +17,10 @@
 			"bsonType": "timestamp",
 			"description": "上传时间"
 		},
+		"update_date": {
+			"bsonType": "timestamp",
+			"description": "更新时间"
+		},
 		"question_type": {
 			"bsonType": "int",
 			"title": "题目类型",
@@ -103,6 +107,19 @@
 			"bsonType": "int",
 			"title": "是否审核",
 			"description": "是否审核：0 无 1 有",
+			"defaultValue": 0,
+			"enum": [{
+				"text": "无",
+				"value": 0
+			}, {
+				"text": "有",
+				"value": 1
+			}]
+		},
+		"is_delete": {
+			"bsonType": "int",
+			"title": "是否被用户删除",
+			"description": "是否被用户删除：0 无 1 有",
 			"defaultValue": 0,
 			"enum": [{
 				"text": "无",

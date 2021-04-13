@@ -27,9 +27,12 @@ exports.main = async (event, context) => {
 					},
 					{
 						upload_user: params.userName
+					},
+					{
+						is_auditing: params.isAuditing
 					}
 				]).and({
-					is_auditing: 1
+					is_delete: 0
 				})
 			).orderBy('upload_date', 'desc').get();
 			res = {
@@ -40,17 +43,30 @@ exports.main = async (event, context) => {
 		case 'question-item':
 			const questionItemCollection = db.collection('question-list');
 			let questionItem = await questionItemCollection.where({
-				_id: params.questionId
+				_id: params.questionId,
 			}).get();
 			res = {
 				code: 0,
 				...questionItem
 			}
 			break;
+		case 'delete-question':
+			const deleteQuestionCollection = db.collection('question-list');
+			let deleteQuestionCount = await deleteQuestionCollection.where({
+				_id: params.questionId
+			}).update({
+				is_delete: 1
+			});
+			res = {
+				code: 0,
+				updateNum: deleteQuestionCount
+			}
+			break;
 		case 'get-random-question-item':
 			const getRandomQuestionItemCollection = db.collection('question-list');
 			let getRandomQuestionItem = await getRandomQuestionItemCollection.aggregate().match({
-				is_auditing: 1
+				is_auditing: 1,
+				is_delete: 0
 			}).sample({
 				size: 1
 			}).end();
@@ -63,7 +79,8 @@ exports.main = async (event, context) => {
 			const examinationQuestionListCollection = db.collection('question-list');
 			let examinationQuestionList = await examinationQuestionListCollection.aggregate().match({
 				question_type: 0,
-				is_auditing: 1
+				is_auditing: 1,
+				is_delete: 0
 			}).sample({
 				size: params.questionNum
 			}).project({
@@ -146,6 +163,30 @@ exports.main = async (event, context) => {
 			let submitQuestionCount = await submitQuestionCollection.add({
 				upload_user: params.uploadUser,
 				upload_date: params.uploadDate,
+				update_date: params.uploadDate,
+				question_type: params.questionType,
+				question_title: params.questionContent,
+				question_content: params.questionContent,
+				question_option: params.questionOption,
+				question_answer: params.questionAnswer,
+				question_explain: params.questionExplain,
+				is_wrong: 0,
+				question_tag: params.questionTag,
+				question_difficulty: params.questionDifficulty,
+				is_auditing: 0,
+				is_delete: 0
+			});
+			res = {
+				code: 0,
+				updateNum: submitQuestionCount
+			}
+			break;
+		case 'update-question':
+			const updateQuestionCollection = db.collection('question-list');
+			let updateQuestionCount = await updateQuestionCollection.where({
+				_id: params.questionId
+			}).update({
+				update_date: params.uploadDate,
 				question_type: params.questionType,
 				question_title: params.questionContent,
 				question_content: params.questionContent,
@@ -159,7 +200,7 @@ exports.main = async (event, context) => {
 			});
 			res = {
 				code: 0,
-				updateNum: submitQuestionCount
+				updateNum: updateQuestionCount
 			}
 			break;
 		default:

@@ -163,3 +163,6 @@ this.$emit("examinationDetailValue",this.examinationDetailValue);
 
 > day27 (20210412)
 - 增加题目管理页面
+
+> day28 (20210413)
+- 题目管理页面功能实现：1.修改题目信息；2.删除题目

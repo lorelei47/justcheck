@@ -111,11 +111,13 @@
 				questionContent: '',
 				questionAnswer: '',
 				questionExplain: '',
+				questionId: null,
 			}
 		},
 		onLoad(option) {
 			if (JSON.stringify(option) !== "{}") {
 				const questionDetail = JSON.parse(decodeURIComponent(option.detail));
+				this.questionId = questionDetail.questionId;
 				this.questionTypeIndex = questionDetail.questionType;
 				this.questionDifficultyIndex = questionDetail.questionDifficulty - 1;
 				this.questionTagList = questionDetail.questionTag;
@@ -292,30 +294,36 @@
 				if (!this.checkForm()) {
 					return;
 				}
-				this.dialogContent = '确认上传题目';
+				this.dialogContent = this.editType == 'add' ? '确认上传题目' : '确认保存修改';
 				this.$refs.popupDialog.open();
 			},
 			dialogConfirm(done) {
+				let message = (this.editType == 'add' ? '上传成功' : '修改成功') + '，感谢您对题库的贡献';
 				this.submitQuestion().then(() => {
-					this.popupShow('success', '上传成功，感谢您对题库的贡献');
+					this.popupShow('success', message);
 					done()
 				}).then(() => {
-					this.initPage();
+					if(this.editType == 'add'){
+						this.initPage();
+					}
 				});
 			},
 			dialogClose(done) {
-				this.popupShow('info', '您取消了上传');
+				let message = this.editType == 'add' ? '您取消了上传' : '您取消了保存';
+				this.popupShow('info', message);
 				done()
 			},
 			submitQuestion() {
 				return new Promise((resovle, reject) => {
 					let _self = this;
+					let actionType = this.editType == 'add' ? 'submit-question' : 'update-question';
 					if (this.hasLogin) {
 						uniCloud.callFunction({
 							name: 'question-handler',
 							data: {
-								action: 'submit-question',
+								action: actionType,
 								param: {
+									questionId: _self.questionId,
 									uploadUser: _self.userName,
 									uploadDate: new Date().getTime(),
 									questionType: _self.questionTypeIndex,

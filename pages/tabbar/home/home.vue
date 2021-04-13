@@ -149,7 +149,8 @@
 					data: {
 						action: 'question-list',
 						param: {
-							searchWord: _self.searchWord
+							searchWord: _self.searchWord,
+							isAuditing: 1
 						}
 					},
 					success: (res) => {

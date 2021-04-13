@@ -8,8 +8,6 @@
 // 下面示例查询uni-id-users表的所有数据
 
 //更新所有未审核的题目数据
-db.collection('question-list').where({
-	is_auditing: 0
-}).update({
-	is_auditing: 1
+db.collection('question-list').update({
+	is_delete: 0
 })
