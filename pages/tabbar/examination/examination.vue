@@ -241,7 +241,9 @@
 			});
 		},
 		onHide() {
-			this.submitExam();
+			if(this.isBegin && this.questionList.length > 0){
+				this.submitExam();
+			}
 		},
 		watch: {
 			getQuestionDetail() {

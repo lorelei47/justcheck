@@ -115,7 +115,7 @@
 					uniCloud.callFunction({
 						name: 'question-handler',
 						data: {
-							action: 'question-list',
+							action: 'my-question-list',
 							param: {
 								userName: _self.userName,
 							}

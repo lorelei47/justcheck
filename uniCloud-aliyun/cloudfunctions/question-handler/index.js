@@ -24,20 +24,28 @@ exports.main = async (event, context) => {
 					},
 					{
 						question_tag: new RegExp(params.searchWord, 'i')
-					},
-					{
-						upload_user: params.userName
-					},
-					{
-						is_auditing: params.isAuditing
 					}
 				]).and({
+					is_auditing: params.isAuditing,
 					is_delete: 0
 				})
 			).orderBy('upload_date', 'desc').get();
 			res = {
 				code: 0,
 				...questionList
+			}
+			break;
+		case 'my-question-list':
+			const myQuestionListCollection = db.collection('question-list');
+			let myQuestionList = await myQuestionListCollection.where(
+				dbCmd.and({
+					upload_user: params.userName,
+					is_delete: 0
+				})
+			).orderBy('upload_date', 'desc').get();
+			res = {
+				code: 0,
+				...myQuestionList
 			}
 			break;
 		case 'question-item':
