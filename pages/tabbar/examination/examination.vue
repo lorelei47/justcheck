@@ -259,9 +259,7 @@
 									url: '/pages/user/login/login'
 								});
 							} else {
-								uni.navigateTo({
-									url: '/pages/user/login/login'
-								});
+								this.logout();
 							}
 						}
 					},
