@@ -21,4 +21,5 @@
 
 ### 在线浏览
 > 二维码
+
 ![image](https://github.com/lorelei47/justcheck/blob/main/doc/qecode.png)
